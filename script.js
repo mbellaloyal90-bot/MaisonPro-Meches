@@ -10,7 +10,7 @@
   "use strict";
 
   /* ---------- Configuration boutique ---------- */
-  const WHATSAPP_NUMERO = "237675709180"; // format international sans le +
+  const WHATSAPP_NUMERO = "237651107092"; // format international sans le +
   const FRAIS_LIVRAISON = 1000; // FCFA, Yaoundé
 
   /* ---------- État du panier ---------- */
