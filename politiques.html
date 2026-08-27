@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Politiques de livraison, retours, conditions générales de vente et mentions légales — MaisonPro Mèches, Yaoundé.">
+  <title>Politiques & Mentions légales — MaisonPro Mèches</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-politiques">
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="brand">
+      <span class="brand-name">MaisonPro</span>
+      <span class="brand-tag">mèches</span>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="index.html">Boutique</a></li>
+        <li><a href="index.html#produits">Nos mèches</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <button type="button" id="cart-toggle" aria-label="Ouvrir le panier">
+      🛍️ Panier <span id="cart-count">0</span>
+    </button>
+  </header>
+
+  <main>
+    <h1>Politiques & informations légales</h1>
+    <p class="maj">Dernière mise à jour : août 2026</p>
+
+    <nav class="politiques-nav">
+      <a href="#livraison">Livraison</a>
+      <a href="#retours">Retours</a>
+      <a href="#cgv">CGV</a>
+      <a href="#confidentialite">Confidentialité</a>
+      <a href="#mentions-legales">Mentions légales</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <section class="politique-bloc" id="livraison">
+      <h2>Livraison</h2>
+      <p>Nous livrons dans toute la ville de Yaoundé.</p>
+      <ul>
+        <li>Frais de livraison : 1 000 FCFA, quel que soit le quartier.</li>
+        <li>Délai indicatif : sous 24h après confirmation de la commande.</li>
+        <li>La commande est confirmée par échange WhatsApp après réception de ta demande depuis le panier du site.</li>
+        <li>Le paiement se fait à la confirmation, avant ou à la livraison selon accord avec le vendeur.</li>
+      </ul>
+    </section>
+
+    <section class="politique-bloc" id="retours">
+      <h2>Retours & remboursements</h2>
+      <p>Tu as 7 jours après réception pour signaler un problème et demander un retour ou un échange.</p>
+      <ul>
+        <li>Les mèches doivent être dans leur état d'origine : non portées, non coiffées, non lavées et avec leur emballage.</li>
+        <li>Pour des raisons d'hygiène, un produit déjà porté ou modifié (coupé, coloré) ne peut pas être repris.</li>
+        <li>En cas de défaut visible à la réception (couleur différente de la commande, quantité incorrecte), contacte-nous immédiatement avec une photo, avant toute utilisation.</li>
+        <li>Le remboursement ou l'échange est traité après vérification du produit retourné.</li>
+        <li>Les frais de retour sont à la charge du client, sauf en cas d'erreur de notre part.</li>
+      </ul>
+    </section>
+
+    <section class="politique-bloc" id="cgv">
+      <h2>Conditions générales de vente</h2>
+      <p>En passant commande via ce site et sa confirmation WhatsApp, le client accepte les conditions suivantes.</p>
+      <ul>
+        <li><strong>Commande :</strong> toute commande est considérée comme définitive après confirmation écrite (WhatsApp) des deux parties sur le produit, la quantité, le prix et l'adresse de livraison.</li>
+        <li><strong>Prix :</strong> les prix affichés sont en Francs CFA (FCFA), livraison à Yaoundé en supplément. MaisonPro Mèches se réserve le droit de modifier ses prix à tout moment, sans effet sur les commandes déjà confirmées.</li>
+        <li><strong>Paiement :</strong> accepté par Mobile Money (MTN MoMo) ou virement bancaire, selon les coordonnées communiquées lors de la confirmation.</li>
+        <li><strong>Disponibilité :</strong> les produits sont proposés dans la limite des stocks disponibles. En cas d'indisponibilité après commande, un produit similaire ou un remboursement sera proposé.</li>
+        <li><strong>Litiges :</strong> tout désaccord se règle à l'amiable en priorité, par échange direct avec le vendeur.</li>
+      </ul>
+    </section>
+
+    <section class="politique-bloc" id="confidentialite">
+      <h2>Confidentialité</h2>
+      <p>Les informations transmises lors d'une commande (nom, numéro, adresse) servent uniquement à traiter et livrer la commande. Elles ne sont ni revendues ni partagées avec des tiers, et sont conservées uniquement le temps nécessaire au suivi de la relation client.</p>
+    </section>
+
+    <section class="politique-bloc" id="mentions-legales">
+      <h2>Mentions légales</h2>
+      <ul>
+        <li><strong>Nom commercial :</strong> MaisonPro Mèches</li>
+        <li><strong>Activité :</strong> vente d'extensions capillaires (mèches naturelles et synthétiques)</li>
+        <li><strong>Localisation :</strong> Yaoundé, Région du Centre, Cameroun</li>
+        <li><strong>Contact :</strong> +237 675 709 180 — mbjjaures@gmail.com</li>
+      </ul>
+    </section>
+
+    <section class="politique-bloc" id="contact">
+      <h2>Contact</h2>
+      <ul>
+        <li><strong>WhatsApp / Téléphone :</strong> +237 675 709 180</li>
+        <li><strong>Email :</strong> mbjjaures@gmail.com</li>
+        <li><strong>Adresse :</strong> Yaoundé, Centre, Cameroun</li>
+        <li><strong>Mobile Money (MTN) :</strong> 675 709 180</li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- PANIER (DRAWER) — présent sur toutes les pages pour rester accessible -->
+  <div id="cart-overlay"></div>
+  <aside id="cart-drawer" aria-hidden="true">
+    <div class="cart-head">
+      <h2>Ton panier</h2>
+      <button type="button" id="cart-close" aria-label="Fermer le panier">✕</button>
+    </div>
+    <div id="cart-items"></div>
+    <div class="cart-foot">
+      <div class="cart-total">
+        <span>Total produits</span>
+        <span id="cart-total-valeur">0 FCFA</span>
+      </div>
+      <p class="cart-livraison">+ 1 000 FCFA de livraison à Yaoundé, ajoutés au message WhatsApp</p>
+      <button type="button" id="checkout-whatsapp" disabled>
+        Commander sur WhatsApp
+      </button>
+    </div>
+  </aside>
+
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <section>
+        <h4>MaisonPro Mèches</h4>
+        <p>Yaoundé, Centre — Cameroun</p>
+        <p>WhatsApp / Tél : +237 675 709 180</p>
+      </section>
+    </div>
+    <div class="footer-bottom">© 2026 MaisonPro Mèches — Yaoundé, Cameroun</div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
