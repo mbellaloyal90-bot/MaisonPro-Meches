@@ -7,16 +7,7 @@
    propres clés (Firebase Console > Paramètres du projet).
    ========================================================= */
 
-/* ---------- 1. Configuration — REMPLACE avec tes propres valeurs ---------- */
-const firebaseConfig = {
-  // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+/* ---------- 1. Configuration ---------- */
 const firebaseConfig = {
   apiKey: "AIzaSyDGqOb9i4l6Ebs30WCOtQGGC6IFA3Jzxl0",
   authDomain: "maisonpro-meches.firebaseapp.com",
@@ -24,12 +15,7 @@ const firebaseConfig = {
   storageBucket: "maisonpro-meches.firebasestorage.app",
   messagingSenderId: "637669819790",
   appId: "1:637669819790:web:0bd03290dbcd8e8e4950df",
-  measurementId: "G-N5Z4MEY002"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+  measurementId: "G-N5Z4MEY002",
 };
 
 firebase.initializeApp(firebaseConfig);
