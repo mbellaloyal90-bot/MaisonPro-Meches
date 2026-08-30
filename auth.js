@@ -1,3 +1,5 @@
+// Mode sécurité - si Firebase pas prêt, on ne bloque pas le site
+try {
 /* =========================================================
    MaisonPro Mèches — auth.js
    Authentification via Firebase : connexion Google et
@@ -145,3 +147,4 @@ const auth = firebase.auth();
     }
   });
 })();
+   } catch(e) { console.log("Firebase en attente", e); }
