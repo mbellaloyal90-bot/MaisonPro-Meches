@@ -1,34 +1,237 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MaisonPro Mèches — Extensions capillaires à Yaoundé</title>
-<meta name="description" content="Cheveux naturels & synthétiques. Des mèches choisies pour durer, pas juste pour la photo.">
-<style>
-body{background:#FFF8F0;color:#2B1810;font-family:Arial;margin:0}
-header{background:#2B1810;color:#FFF8F0;padding:20px;text-align:center}
-.produits{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;padding:20px}
-.card{background:white;border:1px solid #D4A373;border-radius:16px;padding:16px;text-align:center}
-.card img{width:100%;height:220px;object-fit:cover;border-radius:12px}
-.btn{background:#2B1810;color:#FFF8F0;padding:10px 20px;border-radius:20px;border:none}
-</style>
+  <meta name="google-site-verification" content="11jqgBTKEiMnR0UeKzf0x7MXS545FRdIPdiT_axLBls" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MaisonPro Mèches — extensions capillaires naturelles à Yaoundé. Commande simple par WhatsApp, livraison rapide.">
+  <title>MaisonPro Mèches — Extensions capillaires à Yaoundé</title>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header><h1>MaisonPro Mèches</h1><p>Extensions capillaires à Yaoundé</p></header>
-<main id="produits" class="produits"></main>
-<script>
-const produits=[
-{nom:"Balayage Doré Ondulé",prix:"45€",img:"./images/balayage-dore-ondule.jpg"},
-{nom:"Mèches Blondes Naturelles",prix:"52€",img:"./images/balayage-dore-ondule-2.jpg"},
-{nom:"Balayage Miel",prix:"48€",img:"./images/balayage-dore-ondule-3.jpg"}
-];
-document.getElementById("produits").innerHTML=produits.map(p=>`
-<div class="card">
-<img src="${p.img}" onerror="this.src='https://via.placeholder.com/300x220?text=Meche+Naturelle'">
-<h3>${p.nom}</h3><p style="color:#D4A373;font-weight:bold">${p.prix}</p>
-<button class="btn">Voir le détail</button>
-</div>`).join("");
-</script>
+
+  <!-- HEADER -->
+  <header class="site-header" >
+    <div class="brand">
+      <span class="brand-name">MaisonPro</span>
+      <span class="brand-tag">mèches</span>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#produits">Nos mèches</a></li>
+        <li><a href="#comment-ca-marche">Comment commander</a></li>
+        <li><a href="politiques.html">Livraison & Retours</a></li>
+        <li><a href="politiques.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <button type="button" id="account-toggle" aria-label="Mon compte">👤 Mon compte</button>
+    <button type="button" id="cart-toggle" aria-label="Ouvrir le panier">
+      🛍️ Panier <span id="cart-count">0</span>
+    </button>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <span class="hero-eyebrow">Cheveux naturels & synthétiques</span>
+      <h1>Des mèches choisies pour <em>durer</em>, pas juste pour la photo.</h1>
+      <p>Extensions capillaires 100% naturelles, sélectionnées à la main. Commande en 2 minutes, confirmation directe sur WhatsApp.</p>
+      <svg class="hero-strand" viewBox="0 0 520 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M5 30 C 90 5, 150 55, 230 30 S 350 5, 430 30 S 500 45, 515 30" stroke="#D9A857" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- PRODUITS -->
+  <section class="produits" id="produits">
+    <div class="section-head">
+      <span class="eyebrow">La sélection</span>
+      <h2>Nos mèches du moment</h2>
+      <p>Trois textures, trois façons de changer de tête — choisis, ajoute au panier, commande.</p>
+    </div>
+
+    <div class="grille-produits">
+
+      <article class="produit-carte"
+                data-id="balayage-dore-ondule"
+                data-nom="Balayage Doré Ondulé"
+                data-prix="26000"
+                data-image="images/balayage-dore-ondule.jpg">
+        <span class="badge-gamme">Naturel</span>
+        <div class="produit-media">
+          <img src="images/balayage-dore-ondule.jpg" alt="Mèches balayage doré ondulé, racines brunes vers pointes blondes">
+        </div>
+        <h3>Balayage Doré Ondulé</h3>
+        <p class="produit-meta">Cheveux naturels · 14 pouces · ondulé</p>
+        <span class="produit-prix">26 000<span>FCFA</span></span>
+        <div class="produit-actions">
+          <div class="qte-control">
+            <button type="button" data-qte="moins" aria-label="Diminuer">−</button>
+            <input type="text" class="qte-input" value="1" inputmode="numeric" aria-label="Quantité">
+            <button type="button" data-qte="plus" aria-label="Augmenter">+</button>
+          </div>
+          <button type="button" class="btn-ajouter">Ajouter au panier</button>
+        </div>
+      </article>
+
+      <article class="produit-carte"
+                data-id="chatain-balayage-caramel"
+                data-nom="Châtain Balayage Caramel"
+                data-prix="30000"
+                data-image="images/chatain-balayage-caramel.jpg">
+        <span class="badge-gamme">Naturel</span>
+        <div class="produit-media">
+          <img src="images/chatain-balayage-caramel.jpg" alt="Mèches châtain avec balayage caramel, longueur mi-longue ondulée">
+        </div>
+        <h3>Châtain Balayage Caramel</h3>
+        <p class="produit-meta">Cheveux naturels · 16 pouces · ondulé</p>
+        <span class="produit-prix">30 000<span>FCFA</span></span>
+        <div class="produit-actions">
+          <div class="qte-control">
+            <button type="button" data-qte="moins" aria-label="Diminuer">−</button>
+            <input type="text" class="qte-input" value="1" inputmode="numeric" aria-label="Quantité">
+            <button type="button" data-qte="plus" aria-label="Augmenter">+</button>
+          </div>
+          <button type="button" class="btn-ajouter">Ajouter au panier</button>
+        </div>
+      </article>
+
+      <article class="produit-carte"
+                data-id="blond-cendre-boucle"
+                data-nom="Blond Cendré Bouclé"
+                data-prix="45000"
+                data-image="images/blond-cendre-boucle.jpg">
+        <span class="badge-gamme">Naturel · Premium</span>
+        <div class="produit-media">
+          <img src="images/blond-cendre-boucle.jpg" alt="Mèches blond cendré bouclé, longueur longue">
+        </div>
+        <h3>Blond Cendré Bouclé</h3>
+        <p class="produit-meta">Cheveux naturels · 18 pouces · bouclé</p>
+        <span class="produit-prix">45 000<span>FCFA</span></span>
+        <div class="produit-actions">
+          <div class="qte-control">
+            <button type="button" data-qte="moins" aria-label="Diminuer">−</button>
+            <input type="text" class="qte-input" value="1" inputmode="numeric" aria-label="Quantité">
+            <button type="button" data-qte="plus" aria-label="Augmenter">+</button>
+          </div>
+          <button type="button" class="btn-ajouter">Ajouter au panier</button>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- COMMENT ÇA MARCHE -->
+  <section class="comment" id="comment-ca-marche">
+    <div class="section-head">
+      <span class="eyebrow">Simple, sans compte à créer</span>
+      <h2>Comment commander</h2>
+    </div>
+    <div class="etapes">
+      <div class="etape">
+        <div class="etape-num">1</div>
+        <h3>Choisis tes mèches</h3>
+        <p>Ajoute un ou plusieurs produits au panier, avec la quantité voulue.</p>
+      </div>
+      <div class="etape">
+        <div class="etape-num">2</div>
+        <h3>Envoie sur WhatsApp</h3>
+        <p>Un message avec ta commande et le total se prépare automatiquement.</p>
+      </div>
+      <div class="etape">
+        <div class="etape-num">3</div>
+        <h3>Confirme & reçois</h3>
+        <p>On confirme la dispo et le paiement, puis on livre à Yaoundé sous 24h.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANIER (DRAWER) -->
+  <div id="cart-overlay"></div>
+  <aside id="cart-drawer" aria-hidden="true">
+    <div class="cart-head">
+      <h2>Ton panier</h2>
+      <button type="button" id="cart-close" aria-label="Fermer le panier">✕</button>
+    </div>
+    <div id="cart-items"></div>
+    <div class="cart-foot">
+      <div class="cart-total">
+        <span>Total produits</span>
+        <span id="cart-total-valeur">0 FCFA</span>
+      </div>
+      <p class="cart-livraison">+ 1 000 FCFA de livraison à Yaoundé, ajoutés au message WhatsApp</p>
+      <button type="button" id="checkout-whatsapp" disabled>
+        Commander sur WhatsApp
+      </button>
+    </div>
+  </aside>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" id="contact">
+    <div class="footer-grid">
+      <section>
+        <h4>MaisonPro Mèches</h4>
+        <p>Yaoundé, Centre — Cameroun</p>
+        <p>WhatsApp / Tél : +237 651 107 092</p>
+        <p>mbellaloyal90@gmail.com</p>
+      </section>
+      <section>
+        <h4>Paiement</h4>
+        <p>MTN Mobile Money : 651 107 092</p>
+        <p>Virement bancaire sur demande</p>
+      </section>
+      <section>
+        <h4>Infos</h4>
+        <a href="politiques.html">Livraison & Retours</a>
+        <a href="politiques.html#cgv">Conditions générales de vente</a>
+        <a href="politiques.html#mentions-legales">Mentions légales</a>
+      </section>
+    </div>
+    <div class="footer-bottom">
+      © 2026 MaisonPro Mèches — Yaoundé, Cameroun
+    </div>
+  </footer>
+<div id="auth-modal" class="auth-modal">
+  <div class="auth-modal-inner">
+    <button type="button" id="auth-close" aria-label="Fermer">✕</button>
+    <p id="auth-erreur" class="auth-erreur" style="display:none;"></p>
+
+    <!-- Affiché une fois connecté -->
+    <div id="auth-connecte" style="display:none;">
+      <h2>Bonjour <span id="auth-nom-utilisateur"></span> 👋</h2>
+      <button type="button" id="btn-deconnexion" class="btn-ajouter">Se déconnecter</button>
+    </div>
+
+    <!-- Affiché si pas encore connecté -->
+    <div id="auth-formulaires">
+      <h2>Mon compte</h2>
+      <button type="button" id="btn-google" class="btn-google">
+        Continuer avec Google
+      </button>
+
+      <p class="auth-separateur">ou avec un email</p>
+
+      <form id="form-inscription" class="auth-form">
+        <input type="text" id="inscription-nom" placeholder="Ton nom" required>
+        <input type="email" id="inscription-email" placeholder="Email" required>
+        <input type="password" id="inscription-motdepasse" placeholder="Mot de passe (6 caractères min.)" required minlength="6">
+        <button type="submit" class="btn-ajouter">Créer un compte</button>
+      </form>
+
+      <p class="auth-separateur">déjà un compte ?</p>
+
+      <form id="form-connexion" class="auth-form">
+        <input type="email" id="connexion-email" placeholder="Email" required>
+        <input type="password" id="connexion-motdepasse" placeholder="Mot de passe" required>
+        <button type="submit" class="btn-ajouter">Se connecter</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+  <script src="script.js"></script>
+  <script src="auth.js"></script>
 </body>
 </html>
