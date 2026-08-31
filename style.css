@@ -709,6 +709,8 @@ footer.site-footer {
   padding: 34px 28px;
   width: 100%;
   max-width: 380px;
+  max-height: 88vh;
+  overflow-y: auto;
   box-shadow: var(--shadow-card-hover);
   transform: translateY(12px);
   transition: transform .3s var(--ease);
