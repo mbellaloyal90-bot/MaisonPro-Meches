@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta name="google-site-verification" content="0seFgr6ss9jJ8ZA6l37tjluWZ5vhbNdE4a8rQt1-kmE" />
+  <meta name="google-site-verification" content="11jqgBTKEiMnR0UeKzf0x7MXS545FRdIPdiT_axLBls" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="MaisonPro Mèches — extensions capillaires naturelles à Yaoundé. Commande simple par WhatsApp, livraison rapide.">
   <title>MaisonPro Mèches — Extensions capillaires à Yaoundé</title>
+  <link rel="icon" type="image/png" href="images/logo.png">
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" type="image/png" href="images/favicon-removebg-preview.png">
 </head>
 <body>
 
   <!-- HEADER -->
-  <header class="site-header" >
+  <header class="site-header">
     <div class="brand">
+      <img src="images/logo.png" alt="Logo MaisonPro Mèches" class="brand-logo">
       <span class="brand-name">MaisonPro</span>
       <span class="brand-tag">mèches</span>
     </div>
@@ -36,6 +37,7 @@
   <!-- HERO -->
   <section class="hero">
     <div class="hero-inner">
+      <img src="images/logo.png" alt="MaisonPro Mèches" class="hero-logo">
       <span class="hero-eyebrow">Cheveux naturels & synthétiques</span>
       <h1>Des mèches choisies pour <em>durer</em>, pas juste pour la photo.</h1>
       <p>Extensions capillaires 100% naturelles, sélectionnées à la main. Commande en 2 minutes, confirmation directe sur WhatsApp.</p>
@@ -173,6 +175,7 @@
   <footer class="site-footer" id="contact">
     <div class="footer-grid">
       <section>
+        <img src="images/logo.png" alt="Logo MaisonPro Mèches" class="footer-logo">
         <h4>MaisonPro Mèches</h4>
         <p>Yaoundé, Centre — Cameroun</p>
         <p>WhatsApp / Tél : +237 651 107 092</p>
@@ -194,43 +197,42 @@
       © 2026 MaisonPro Mèches — Yaoundé, Cameroun
     </div>
   </footer>
-<div id="auth-modal" class="auth-modal">
-  <div class="auth-modal-inner">
-    <button type="button" id="auth-close" aria-label="Fermer">✕</button>
-    <p id="auth-erreur" class="auth-erreur" style="display:none;"></p>
 
-    <!-- Affiché une fois connecté -->
-    <div id="auth-connecte" style="display:none;">
-      <h2>Bonjour <span id="auth-nom-utilisateur"></span> 👋</h2>
-      <button type="button" id="btn-deconnexion" class="btn-ajouter">Se déconnecter</button>
-    </div>
+  <div id="auth-modal" class="auth-modal">
+    <div class="auth-modal-inner">
+      <button type="button" id="auth-close" aria-label="Fermer">✕</button>
+      <p id="auth-erreur" class="auth-erreur" style="display:none;"></p>
 
-    <!-- Affiché si pas encore connecté -->
-    <div id="auth-formulaires">
-      <h2>Mon compte</h2>
-      <button type="button" id="btn-google" class="btn-google">
-        Continuer avec Google
-      </button>
+      <div id="auth-connecte" style="display:none;">
+        <h2>Bonjour <span id="auth-nom-utilisateur"></span> 👋</h2>
+        <button type="button" id="btn-deconnexion" class="btn-ajouter">Se déconnecter</button>
+      </div>
 
-      <p class="auth-separateur">ou avec un email</p>
+      <div id="auth-formulaires">
+        <h2>Mon compte</h2>
+        <button type="button" id="btn-google" class="btn-google">
+          Continuer avec Google
+        </button>
 
-      <form id="form-inscription" class="auth-form">
-        <input type="text" id="inscription-nom" placeholder="Ton nom" required>
-        <input type="email" id="inscription-email" placeholder="Email" required>
-        <input type="password" id="inscription-motdepasse" placeholder="Mot de passe (6 caractères min.)" required minlength="6">
-        <button type="submit" class="btn-ajouter">Créer un compte</button>
-      </form>
+        <p class="auth-separateur">ou avec un email</p>
 
-      <p class="auth-separateur">déjà un compte ?</p>
+        <form id="form-inscription" class="auth-form">
+          <input type="text" id="inscription-nom" placeholder="Ton nom" required>
+          <input type="email" id="inscription-email" placeholder="Email" required>
+          <input type="password" id="inscription-motdepasse" placeholder="Mot de passe (6 caractères min.)" required minlength="6">
+          <button type="submit" class="btn-ajouter">Créer un compte</button>
+        </form>
 
-      <form id="form-connexion" class="auth-form">
-        <input type="email" id="connexion-email" placeholder="Email" required>
-        <input type="password" id="connexion-motdepasse" placeholder="Mot de passe" required>
-        <button type="submit" class="btn-ajouter">Se connecter</button>
-      </form>
+        <p class="auth-separateur">déjà un compte ?</p>
+
+        <form id="form-connexion" class="auth-form">
+          <input type="email" id="connexion-email" placeholder="Email" required>
+          <input type="password" id="connexion-motdepasse" placeholder="Mot de passe" required>
+          <button type="submit" class="btn-ajouter">Se connecter</button>
+        </form>
+      </div>
     </div>
   </div>
-</div>
 
   <script src="script.js"></script>
   <script src="auth.js"></script>

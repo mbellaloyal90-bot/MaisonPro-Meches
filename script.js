@@ -9,13 +9,9 @@
 (function () {
   "use strict";
 
-  /* ---------- Configuration boutique ---------- */
-  const WHATSAPP_NUMERO = "237651107092"; // format international sans le +
-  const FRAIS_LIVRAISON = 1000; // FCFA, Yaoundé
+  const WHATSAPP_NUMERO = "237651107092";
+  const FRAIS_LIVRAISON = 1000;
 
-  /* ---------- État du panier ---------- */
-  // Rechargé depuis sessionStorage si l'utilisateur navigue entre les pages
-  // du site pendant la même session (perdu à la fermeture de l'onglet).
   let panier = chargerPanier();
 
   function chargerPanier() {
@@ -30,16 +26,13 @@
   function sauvegarderPanier() {
     try {
       sessionStorage.setItem("maisonpro-meches-panier", JSON.stringify(panier));
-    } catch (e) {
-      /* silencieux : navigation privée ou stockage désactivé */
-    }
+    } catch (e) {}
   }
 
   function formaterPrix(nombre) {
     return nombre.toLocaleString("fr-FR").replace(/,/g, " ") + " FCFA";
   }
 
-  /* ---------- Actions panier ---------- */
   function ajouterAuPanier(id, nom, prix, image, quantite) {
     const existant = panier.find((item) => item.id === id);
     if (existant) {
@@ -76,7 +69,6 @@
     return panier.reduce((somme, item) => somme + item.quantite, 0);
   }
 
-  /* ---------- Rendu du panier (drawer) ---------- */
   function rendrePanier() {
     const compteurs = document.querySelectorAll("#cart-count");
     compteurs.forEach((c) => (c.textContent = nombreArticles()));
@@ -84,7 +76,7 @@
     const conteneur = document.getElementById("cart-items");
     const boutonCommander = document.getElementById("checkout-whatsapp");
     const totalEl = document.getElementById("cart-total-valeur");
-    if (!conteneur) return; // page sans panier (ex: politiques.html)
+    if (!conteneur) return;
 
     if (panier.length === 0) {
       conteneur.innerHTML = '<p class="cart-vide">Ton panier est vide pour le moment.</p>';
@@ -125,7 +117,6 @@
     });
   }
 
-  /* ---------- Message WhatsApp ---------- */
   function construireMessageWhatsApp() {
     let lignes = ["Bonjour MaisonPro, je souhaite commander :", ""];
     panier.forEach((item) => {
@@ -145,7 +136,6 @@
     window.open(`https://wa.me/${WHATSAPP_NUMERO}?text=${message}`, "_blank");
   }
 
-  /* ---------- Drawer panier : ouverture/fermeture ---------- */
   function initDrawer() {
     const overlay = document.getElementById("cart-overlay");
     const drawer = document.getElementById("cart-drawer");
@@ -171,7 +161,6 @@
     });
   }
 
-  /* ---------- Cartes produits : quantité + ajout ---------- */
   function initCartesProduits() {
     document.querySelectorAll(".produit-carte").forEach((carte) => {
       const input = carte.querySelector(".qte-input");
@@ -207,7 +196,6 @@
     });
   }
 
-  /* ---------- Initialisation ---------- */
   document.addEventListener("DOMContentLoaded", () => {
     initDrawer();
     initCartesProduits();

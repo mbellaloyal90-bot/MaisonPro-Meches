@@ -1,12 +1,7 @@
-// Mode sécurité - si Firebase pas prêt, on ne bloque pas le site
-try {
 /* =========================================================
    MaisonPro Mèches — auth.js
    Authentification via Firebase : connexion Google et
-   création de compte email/mot de passe. Nécessite les
-   scripts Firebase SDK chargés avant ce fichier (voir
-   index.html) et la config ci-dessous remplie avec tes
-   propres clés (Firebase Console > Paramètres du projet).
+   création de compte email/mot de passe.
    ========================================================= */
 
 /* ---------- 1. Configuration ---------- */
@@ -28,19 +23,16 @@ const auth = firebase.auth();
 
   const googleProvider = new firebase.auth.GoogleAuthProvider();
 
-  /* ---------- 2. Connexion avec Google ---------- */
   function connexionGoogle() {
     auth.signInWithPopup(googleProvider).catch((erreur) => {
       afficherErreur(traduireErreur(erreur.code));
     });
   }
 
-  /* ---------- 3. Création de compte par email/mot de passe ---------- */
   function creerCompteEmail(email, motDePasse, nom) {
     auth
       .createUserWithEmailAndPassword(email, motDePasse)
       .then((identifiants) => {
-        // Enregistre le nom affiché sur le profil
         return identifiants.user.updateProfile({ displayName: nom });
       })
       .catch((erreur) => {
@@ -48,19 +40,16 @@ const auth = firebase.auth();
       });
   }
 
-  /* ---------- 4. Connexion par email/mot de passe (compte existant) ---------- */
   function connexionEmail(email, motDePasse) {
     auth.signInWithEmailAndPassword(email, motDePasse).catch((erreur) => {
       afficherErreur(traduireErreur(erreur.code));
     });
   }
 
-  /* ---------- 5. Déconnexion ---------- */
   function deconnexion() {
     auth.signOut();
   }
 
-  /* ---------- 6. Messages d'erreur en français ---------- */
   function traduireErreur(code) {
     const messages = {
       "auth/email-already-in-use": "Cet email a déjà un compte. Essaie de te connecter à la place.",
@@ -83,7 +72,6 @@ const auth = firebase.auth();
     }
   }
 
-  /* ---------- 7. Mise à jour de l'interface selon l'état de connexion ---------- */
   auth.onAuthStateChanged((utilisateur) => {
     const boutonCompte = document.getElementById("account-toggle");
     const modal = document.getElementById("auth-modal");
@@ -104,7 +92,6 @@ const auth = firebase.auth();
     }
   });
 
-  /* ---------- 8. Branchement des boutons/formulaires ---------- */
   document.addEventListener("DOMContentLoaded", () => {
     const boutonCompte = document.getElementById("account-toggle");
     const modal = document.getElementById("auth-modal");
@@ -147,4 +134,3 @@ const auth = firebase.auth();
     }
   });
 })();
-   } catch(e) { console.log("Firebase en attente", e); }
