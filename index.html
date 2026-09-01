@@ -20,18 +20,31 @@
       <span class="brand-name">MaisonPro</span>
       <span class="brand-tag">mèches</span>
     </div>
+
+    <button type="button" id="menu-toggle" aria-label="Ouvrir le menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
     <nav>
       <ul>
         <li><a href="#produits">Nos mèches</a></li>
+        <li><a href="#quiz">Trouve ta teinte</a></li>
         <li><a href="#comment-ca-marche">Comment commander</a></li>
         <li><a href="politiques.html">Livraison & Retours</a></li>
         <li><a href="politiques.html#contact">Contact</a></li>
       </ul>
     </nav>
-    <button type="button" id="account-toggle" aria-label="Mon compte">👤 Mon compte</button>
-    <button type="button" id="cart-toggle" aria-label="Ouvrir le panier">
-      🛍️ Panier <span id="cart-count">0</span>
-    </button>
+
+    <div class="header-actions">
+      <button type="button" id="wishlist-toggle" aria-label="Mes favoris">
+        ❤️<span id="wishlist-count">0</span>
+      </button>
+      <button type="button" id="settings-toggle" aria-label="Paramètres">⚙️</button>
+      <button type="button" id="account-toggle" aria-label="Mon compte">👤 Mon compte</button>
+      <button type="button" id="cart-toggle" aria-label="Ouvrir le panier">
+        🛍️ Panier <span id="cart-count">0</span>
+      </button>
+    </div>
   </header>
 
   <!-- HERO -->
@@ -49,19 +62,20 @@
 
   <!-- PRODUITS -->
   <section class="produits" id="produits">
-    <div class="section-head">
+    <div class="section-head" data-reveal>
       <span class="eyebrow">La sélection</span>
       <h2>Nos mèches du moment</h2>
       <p>Trois textures, trois façons de changer de tête — choisis, ajoute au panier, commande.</p>
     </div>
 
-    <div class="grille-produits">
+    <div class="grille-produits" data-reveal="stagger">
 
       <article class="produit-carte"
                 data-id="balayage-dore-ondule"
                 data-nom="Balayage Doré Ondulé"
                 data-prix="26000"
                 data-image="images/balayage-dore-ondule.jpg">
+        <button type="button" class="btn-favori" aria-label="Ajouter aux favoris"></button>
         <span class="badge-gamme">Naturel</span>
         <div class="produit-media">
           <img src="images/balayage-dore-ondule.jpg" alt="Mèches balayage doré ondulé, racines brunes vers pointes blondes">
@@ -84,6 +98,7 @@
                 data-nom="Châtain Balayage Caramel"
                 data-prix="30000"
                 data-image="images/chatain-balayage-caramel.jpg">
+        <button type="button" class="btn-favori" aria-label="Ajouter aux favoris"></button>
         <span class="badge-gamme">Naturel</span>
         <div class="produit-media">
           <img src="images/chatain-balayage-caramel.jpg" alt="Mèches châtain avec balayage caramel, longueur mi-longue ondulée">
@@ -106,6 +121,7 @@
                 data-nom="Blond Cendré Bouclé"
                 data-prix="45000"
                 data-image="images/blond-cendre-boucle.jpg">
+        <button type="button" class="btn-favori" aria-label="Ajouter aux favoris"></button>
         <span class="badge-gamme">Naturel · Premium</span>
         <div class="produit-media">
           <img src="images/blond-cendre-boucle.jpg" alt="Mèches blond cendré bouclé, longueur longue">
@@ -126,13 +142,48 @@
     </div>
   </section>
 
+  <!-- QUIZ TROUVE TA TEINTE -->
+  <section class="quiz-section" id="quiz-section">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">Pas sûre de ton choix ?</span>
+      <h2>Trouve ta teinte en 2 questions</h2>
+    </div>
+
+    <div id="quiz" data-reveal>
+      <div class="quiz-etape active" data-cle="base">
+        <p class="quiz-question">Quelle est ta couleur de base actuelle ?</p>
+        <div class="quiz-options">
+          <button type="button" class="quiz-option" data-valeur="blond">Blonde</button>
+          <button type="button" class="quiz-option" data-valeur="brun">Châtain / Brune</button>
+          <button type="button" class="quiz-option" data-valeur="noir">Noire</button>
+        </div>
+      </div>
+
+      <div class="quiz-etape" data-cle="envie">
+        <p class="quiz-question">Tu cherches plutôt...</p>
+        <div class="quiz-options">
+          <button type="button" class="quiz-option" data-valeur="subtil">Un effet subtil</button>
+          <button type="button" class="quiz-option" data-valeur="lumineux">Un effet lumineux</button>
+          <button type="button" class="quiz-option" data-valeur="glamour">Un look glamour</button>
+        </div>
+      </div>
+
+      <div class="quiz-resultat" id="quiz-resultat">
+        <img src="images/balayage-dore-ondule.jpg" alt="" class="quiz-resultat-image">
+        <p class="quiz-resultat-texte">Recommandation en cours...</p>
+        <button type="button" class="quiz-resultat-lien">Voir le produit</button>
+        <button type="button" id="quiz-recommencer">Recommencer</button>
+      </div>
+    </div>
+  </section>
+
   <!-- COMMENT ÇA MARCHE -->
   <section class="comment" id="comment-ca-marche">
-    <div class="section-head">
+    <div class="section-head" data-reveal>
       <span class="eyebrow">Simple, sans compte à créer</span>
       <h2>Comment commander</h2>
     </div>
-    <div class="etapes">
+    <div class="etapes" data-reveal="stagger">
       <div class="etape">
         <div class="etape-num">1</div>
         <h3>Choisis tes mèches</h3>
@@ -171,6 +222,35 @@
     </div>
   </aside>
 
+  <!-- PARAMÈTRES -->
+  <div id="settings-overlay" class="settings-overlay"></div>
+  <aside id="settings-panel">
+    <button type="button" id="settings-close" aria-label="Fermer">✕</button>
+    <h2>Paramètres</h2>
+
+    <div class="reglage">
+      <div>
+        <div class="reglage-label">Mode sombre</div>
+        <div class="reglage-desc">Interface plus douce en faible luminosité</div>
+      </div>
+      <label class="switch theme-switch">
+        <input type="checkbox">
+        <span class="switch-piste"></span>
+      </label>
+    </div>
+
+    <div class="reglage">
+      <div>
+        <div class="reglage-label">Animations</div>
+        <div class="reglage-desc">Désactiver les effets de mouvement</div>
+      </div>
+      <label class="switch anim-switch">
+        <input type="checkbox" checked>
+        <span class="switch-piste"></span>
+      </label>
+    </div>
+  </aside>
+
   <!-- FOOTER -->
   <footer class="site-footer" id="contact">
     <div class="footer-grid">
@@ -198,6 +278,13 @@
     </div>
   </footer>
 
+  <!-- BOUTONS FLOTTANTS -->
+  <div class="flottants">
+    <a href="https://wa.me/237651107092" target="_blank" rel="noopener" class="bouton-flottant" id="whatsapp-flottant" aria-label="Nous écrire sur WhatsApp">💬</a>
+    <button type="button" class="bouton-flottant" id="back-to-top" aria-label="Retour en haut">↑</button>
+  </div>
+
+  <!-- COMPTE -->
   <div id="auth-modal" class="auth-modal">
     <div class="auth-modal-inner">
       <button type="button" id="auth-close" aria-label="Fermer">✕</button>
@@ -236,5 +323,6 @@
 
   <script src="script.js"></script>
   <script src="auth.js"></script>
+  <script src="interactions.js"></script>
 </body>
 </html>
