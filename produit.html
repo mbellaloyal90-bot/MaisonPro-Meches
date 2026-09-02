@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta name="google-site-verification" content="11jqgBTKEiMnR0UeKzf0x7MXS545FRdIPdiT_axLBls" />
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="view-transition" content="same-origin">
-  <meta name="description" content="MaisonPro Mèches — extensions capillaires naturelles à Yaoundé. Commande simple par WhatsApp, livraison rapide.">
-  <title>MaisonPro Mèches — Extensions capillaires à Yaoundé</title>
+  <title>Produit — MaisonPro Mèches</title>
   <link rel="icon" type="image/png" href="images/logo.png">
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
@@ -27,9 +25,8 @@
 
     <nav>
       <ul>
-        <li><a href="#produits">Nos mèches</a></li>
-        <li><a href="#quiz-section">Trouve ta teinte</a></li>
-        <li><a href="#comment-ca-marche">Comment commander</a></li>
+        <li><a href="index.html#produits">Nos mèches</a></li>
+        <li><a href="index.html#quiz-section">Trouve ta teinte</a></li>
         <li><a href="politiques.html">Livraison & Retours</a></li>
         <li><a href="politiques.html#contact">Contact</a></li>
       </ul>
@@ -43,82 +40,18 @@
     </div>
   </header>
 
-  <section class="hero">
-    <div class="hero-inner">
-      <img src="images/logo.png" alt="MaisonPro Mèches" class="hero-logo">
-      <span class="hero-eyebrow">Cheveux naturels & synthétiques</span>
-      <h1>Des mèches choisies pour <em>durer</em>, pas juste pour la photo.</h1>
-      <p>Extensions capillaires 100% naturelles, sélectionnées à la main. Commande en 2 minutes, confirmation directe sur WhatsApp.</p>
-      <svg class="hero-strand" viewBox="0 0 520 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M5 30 C 90 5, 150 55, 230 30 S 350 5, 430 30 S 500 45, 515 30" stroke="#D9A857" stroke-width="2" stroke-linecap="round"/>
-      </svg>
+  <section class="detail-section">
+    <div id="detail-produit">
+      <!-- généré par catalogue.js à partir de ?id= -->
     </div>
   </section>
 
-  <section class="produits" id="produits">
+  <section class="similaires-section">
     <div class="section-head" data-reveal>
-      <span class="eyebrow">La sélection</span>
-      <h2>Nos mèches du moment</h2>
-      <p>Clique sur une mèche pour voir tous les détails.</p>
+      <span class="eyebrow">Tu pourrais aussi aimer</span>
+      <h2>Produits similaires</h2>
     </div>
-    <div class="grille-produits" id="grille-produits" data-reveal="stagger">
-      <!-- généré par catalogue.js -->
-    </div>
-  </section>
-
-  <section class="quiz-section" id="quiz-section">
-    <div class="section-head" data-reveal>
-      <span class="eyebrow">Pas sûre de ton choix ?</span>
-      <h2>Trouve ta teinte en 2 questions</h2>
-    </div>
-    <div id="quiz" data-reveal>
-      <div class="quiz-etape active" data-cle="base">
-        <p class="quiz-question">Quelle est ta couleur de base actuelle ?</p>
-        <div class="quiz-options">
-          <button type="button" class="quiz-option" data-valeur="blond">Blonde</button>
-          <button type="button" class="quiz-option" data-valeur="brun">Châtain / Brune</button>
-          <button type="button" class="quiz-option" data-valeur="noir">Noire</button>
-        </div>
-      </div>
-      <div class="quiz-etape" data-cle="envie">
-        <p class="quiz-question">Tu cherches plutôt...</p>
-        <div class="quiz-options">
-          <button type="button" class="quiz-option" data-valeur="subtil">Un effet subtil</button>
-          <button type="button" class="quiz-option" data-valeur="lumineux">Un effet lumineux</button>
-          <button type="button" class="quiz-option" data-valeur="glamour">Un look glamour</button>
-        </div>
-      </div>
-      <div class="quiz-resultat" id="quiz-resultat">
-        <img src="images/balayage-dore-ondule.jpg" alt="" class="quiz-resultat-image">
-        <p class="quiz-resultat-texte">Recommandation en cours...</p>
-        <button type="button" class="quiz-resultat-lien">Voir le produit</button>
-        <button type="button" id="quiz-recommencer">Recommencer</button>
-      </div>
-    </div>
-  </section>
-
-  <section class="comment" id="comment-ca-marche">
-    <div class="section-head" data-reveal>
-      <span class="eyebrow">Simple, sans compte à créer</span>
-      <h2>Comment commander</h2>
-    </div>
-    <div class="etapes" data-reveal="stagger">
-      <div class="etape">
-        <div class="etape-num">1</div>
-        <h3>Choisis tes mèches</h3>
-        <p>Ajoute un ou plusieurs produits au panier, avec la quantité voulue.</p>
-      </div>
-      <div class="etape">
-        <div class="etape-num">2</div>
-        <h3>Envoie sur WhatsApp</h3>
-        <p>Un message avec ta commande et le total se prépare automatiquement.</p>
-      </div>
-      <div class="etape">
-        <div class="etape-num">3</div>
-        <h3>Confirme & reçois</h3>
-        <p>On confirme la dispo et le paiement, puis on livre à Yaoundé sous 24h.</p>
-      </div>
-    </div>
+    <div id="produits-similaires" data-reveal="stagger"></div>
   </section>
 
   <div id="cart-overlay"></div>
@@ -149,7 +82,7 @@
     </div>
   </aside>
 
-  <footer class="site-footer" id="contact">
+  <footer class="site-footer">
     <div class="footer-grid">
       <section>
         <img src="images/logo.png" alt="Logo MaisonPro Mèches" class="footer-logo">
@@ -157,11 +90,6 @@
         <p>Yaoundé, Centre — Cameroun</p>
         <p>WhatsApp / Tél : +237 651 107 092</p>
         <p>mbellaloyal90@gmail.com</p>
-      </section>
-      <section>
-        <h4>Paiement</h4>
-        <p>MTN Mobile Money : 651 107 092</p>
-        <p>Virement bancaire sur demande</p>
       </section>
       <section>
         <h4>Infos</h4>

@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="view-transition" content="same-origin">
   <meta name="description" content="Politiques de livraison, retours, conditions générales de vente et mentions légales — MaisonPro Mèches, Yaoundé.">
   <title>Politiques & Mentions légales — MaisonPro Mèches</title>
   <link rel="icon" type="image/png" href="images/logo.png">
@@ -10,7 +11,6 @@
 </head>
 <body class="page-politiques">
 
-  <!-- HEADER -->
   <header class="site-header">
     <div class="brand">
       <img src="images/logo.png" alt="Logo MaisonPro Mèches" class="brand-logo">
@@ -32,9 +32,7 @@
 
     <div class="header-actions">
       <button type="button" id="settings-toggle" aria-label="Paramètres">⚙️</button>
-      <button type="button" id="cart-toggle" aria-label="Ouvrir le panier">
-        🛍️ Panier <span id="cart-count">0</span>
-      </button>
+      <button type="button" id="cart-toggle" aria-label="Ouvrir le panier">🛍️ <span id="cart-count">0</span></button>
     </div>
   </header>
 
@@ -112,7 +110,6 @@
     </section>
   </main>
 
-  <!-- PANIER (DRAWER) -->
   <div id="cart-overlay"></div>
   <aside id="cart-drawer" aria-hidden="true">
     <div class="cart-head">
@@ -121,43 +118,23 @@
     </div>
     <div id="cart-items"></div>
     <div class="cart-foot">
-      <div class="cart-total">
-        <span>Total produits</span>
-        <span id="cart-total-valeur">0 FCFA</span>
-      </div>
+      <div class="cart-total"><span>Total produits</span><span id="cart-total-valeur">0 FCFA</span></div>
       <p class="cart-livraison">+ 1 000 FCFA de livraison à Yaoundé, ajoutés au message WhatsApp</p>
-      <button type="button" id="checkout-whatsapp" disabled>
-        Commander sur WhatsApp
-      </button>
+      <button type="button" id="checkout-whatsapp" disabled>Commander sur WhatsApp</button>
     </div>
   </aside>
 
-  <!-- PARAMÈTRES -->
   <div id="settings-overlay" class="settings-overlay"></div>
   <aside id="settings-panel">
     <button type="button" id="settings-close" aria-label="Fermer">✕</button>
     <h2>Paramètres</h2>
-
     <div class="reglage">
-      <div>
-        <div class="reglage-label">Mode sombre</div>
-        <div class="reglage-desc">Interface plus douce en faible luminosité</div>
-      </div>
-      <label class="switch theme-switch">
-        <input type="checkbox">
-        <span class="switch-piste"></span>
-      </label>
+      <div><div class="reglage-label">Mode sombre</div><div class="reglage-desc">Interface plus douce en faible luminosité</div></div>
+      <label class="switch theme-switch"><input type="checkbox"><span class="switch-piste"></span></label>
     </div>
-
     <div class="reglage">
-      <div>
-        <div class="reglage-label">Animations</div>
-        <div class="reglage-desc">Désactiver les effets de mouvement</div>
-      </div>
-      <label class="switch anim-switch">
-        <input type="checkbox" checked>
-        <span class="switch-piste"></span>
-      </label>
+      <div><div class="reglage-label">Animations</div><div class="reglage-desc">Désactiver les effets de mouvement</div></div>
+      <label class="switch anim-switch"><input type="checkbox" checked><span class="switch-piste"></span></label>
     </div>
   </aside>
 

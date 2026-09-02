@@ -38,11 +38,12 @@
     if (existant) {
       existant.quantite += quantite;
     } else {
-      panier.push({ id, nom, prix, image, quantite });
+      panier.push({ id, nom, prix: Number(prix), image, quantite });
     }
     sauvegarderPanier();
     rendrePanier();
   }
+  window.mpAjouterAuPanier = ajouterAuPanier;
 
   function changerQuantite(id, delta) {
     const item = panier.find((i) => i.id === id);
@@ -116,6 +117,7 @@
       el.querySelector('[data-action="retirer"]').addEventListener("click", () => retirerDuPanier(id));
     });
   }
+  window.mpRendrePanier = rendrePanier;
 
   function construireMessageWhatsApp() {
     let lignes = ["Bonjour MaisonPro, je souhaite commander :", ""];
@@ -161,47 +163,30 @@
     });
   }
 
-  function initCartesProduits() {
-    document.querySelectorAll(".produit-carte").forEach((carte) => {
-      const input = carte.querySelector(".qte-input");
-      const moins = carte.querySelector('[data-qte="moins"]');
-      const plus = carte.querySelector('[data-qte="plus"]');
-      const btnAjouter = carte.querySelector(".btn-ajouter");
-
-      if (moins) {
-        moins.addEventListener("click", () => {
-          input.value = Math.max(1, parseInt(input.value || "1", 10) - 1);
-        });
-      }
-      if (plus) {
-        plus.addEventListener("click", () => {
-          input.value = parseInt(input.value || "1", 10) + 1;
-        });
-      }
-
-      if (btnAjouter) {
-        btnAjouter.addEventListener("click", () => {
-          const { id, nom, prix, image } = carte.dataset;
-          const quantite = Math.max(1, parseInt(input.value || "1", 10));
-          ajouterAuPanier(id, nom, Number(prix), image, quantite);
-
-          btnAjouter.textContent = "Ajouté ✓";
-          btnAjouter.classList.add("ajoute");
-          setTimeout(() => {
-            btnAjouter.textContent = "Ajouter au panier";
-            btnAjouter.classList.remove("ajoute");
-          }, 1400);
-        });
-      }
+  /* Ajout rapide (1 clic = +1) depuis la grille ou les produits similaires */
+  function initAjoutRapide() {
+    document.querySelectorAll(".produit-carte .btn-ajout-rapide").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const carte = btn.closest(".produit-carte");
+        const { id, nom, prix, image } = carte.dataset;
+        ajouterAuPanier(id, nom, prix, image, 1);
+        btn.textContent = "✓";
+        setTimeout(() => (btn.textContent = "+"), 900);
+      });
     });
   }
 
   document.addEventListener("DOMContentLoaded", () => {
     initDrawer();
-    initCartesProduits();
+    initAjoutRapide();
     rendrePanier();
 
     const boutonCommander = document.getElementById("checkout-whatsapp");
     if (boutonCommander) boutonCommander.addEventListener("click", ouvrirWhatsApp);
   });
+
+  // Les produits similaires (page détail) sont injectés après coup :
+  // on re-scanne les boutons d'ajout rapide une fois le catalogue prêt.
+  document.addEventListener("mp-catalogue-pret", initAjoutRapide);
 })();
