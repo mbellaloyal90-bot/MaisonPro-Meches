@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Modération des avis — MaisonPro Mèches</title>
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-politiques">
+
+  <header class="site-header">
+    <div class="brand">
+      <img src="images/logo.png" alt="Logo MaisonPro Mèches" class="brand-logo">
+      <span class="brand-name">MaisonPro</span>
+      <span class="brand-tag">mèches</span>
+    </div>
+    <nav><ul><li><a href="index.html">Boutique</a></li></ul></nav>
+  </header>
+
+  <main>
+    <h1>Modération des avis</h1>
+    <p class="maj">Page réservée aux comptes propriétaires de la boutique.</p>
+
+    <div id="moderation-verrou" class="politique-bloc">
+      <p>Connecte-toi avec un compte propriétaire pour voir les avis.</p>
+      <button type="button" class="btn-ajouter" onclick="firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())">
+        Se connecter avec Google
+      </button>
+    </div>
+
+    <div id="moderation-contenu" style="display:none;">
+
+      <div id="mod-resume" class="mod-resume"></div>
+
+      <input type="text" id="mod-recherche" class="mod-recherche" placeholder="Rechercher par produit, cliente ou mot du commentaire...">
+
+      <div class="mod-tabs">
+        <button type="button" class="mod-tab actif" data-statut="en_attente">En attente <span id="compte-en_attente">0</span></button>
+        <button type="button" class="mod-tab" data-statut="approuve">Approuvés <span id="compte-approuve">0</span></button>
+        <button type="button" class="mod-tab" data-statut="rejete">Rejetés <span id="compte-rejete">0</span></button>
+        <button type="button" class="mod-tab" data-statut="tous">Tous</button>
+      </div>
+
+      <div id="mod-liste"></div>
+    </div>
+  </main>
+
+  <script src="auth.js"></script>
+  <script>
+    const EMAILS_PROPRIETAIRE = ["mbellaloyal90@gmail.com", "maisonprocontact@gmail.com", "mbjjaures@gmail.com"];
+    const db = firebase.firestore();
+    let TOUS_LES_AVIS = [];
+    let ongletActif = "en_attente";
+    let rechercheActive = "";
+
+    function formaterDate(timestamp) {
+      if (!timestamp) return "";
+      return new Date(timestamp.seconds * 1000).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+    }
+
+    function etoiles(note) {
+      return "★".repeat(note) + "☆".repeat(5 - note);
+    }
+
+    async function chargerTousLesAvis() {
+      const zone = document.getElementById("mod-liste");
+      zone.innerHTML = "<p>Chargement...</p>";
+      try {
+        const snap = await db.collection("avis").get();
+        TOUS_LES_AVIS = [];
+        snap.forEach((doc) => TOUS_LES_AVIS.push({ id: doc.id, ...doc.data() }));
+        TOUS_LES_AVIS.sort((a, b) => (b.dateCreation?.seconds || 0) - (a.dateCreation?.seconds || 0));
+        rendreResume();
+        rendreListe();
+      } catch (e) {
+        zone.innerHTML = `<p style="color:#A23B2A;">Erreur d'accès aux avis : ${e.message}. Vérifie que les règles Firestore sont bien publiées.</p>`;
+      }
+    }
+
+    function rendreResume() {
+      const enAttente = TOUS_LES_AVIS.filter((a) => a.statut === "en_attente").length;
+      const approuves = TOUS_LES_AVIS.filter((a) => a.statut === "approuve");
+      const rejetes = TOUS_LES_AVIS.filter((a) => a.statut === "rejete").length;
+      const moyenne = approuves.length ? (approuves.reduce((s, a) => s + a.note, 0) / approuves.length).toFixed(1) : "—";
+
+      document.getElementById("compte-en_attente").textContent = enAttente;
+      document.getElementById("compte-approuve").textContent = approuves.length;
+      document.getElementById("compte-rejete").textContent = rejetes;
+
+      document.getElementById("mod-resume").innerHTML = `
+        <div class="stat-item"><strong>${TOUS_LES_AVIS.length}</strong><span>avis au total</span></div>
+        <div class="stat-item"><strong>${moyenne}</strong><span>note moyenne publiée</span></div>
+        <div class="stat-item"><strong>${enAttente}</strong><span>en attente de validation</span></div>
+      `;
+    }
+
+    function rendreListe() {
+      const zone = document.getElementById("mod-liste");
+      let filtres = ongletActif === "tous" ? TOUS_LES_AVIS : TOUS_LES_AVIS.filter((a) => a.statut === ongletActif);
+
+      if (rechercheActive) {
+        const q = rechercheActive.toLowerCase();
+        filtres = filtres.filter((a) =>
+          (a.produitNom || "").toLowerCase().includes(q) ||
+          (a.nom || "").toLowerCase().includes(q) ||
+          (a.commentaire || "").toLowerCase().includes(q)
+        );
+      }
+
+      if (filtres.length === 0) {
+        zone.innerHTML = "<p>Aucun avis ici pour le moment.</p>";
+        return;
+      }
+
+      zone.innerHTML = filtres.map((a) => `
+        <div class="moderation-carte" data-id="${a.id}">
+          <div class="moderation-entete">
+            <strong>${a.produitNom || a.produitId}</strong>
+            <span>${etoiles(a.note)} — ${a.nom}</span>
+            <span class="mod-badge mod-badge-${a.statut}">${a.statut === "en_attente" ? "En attente" : a.statut === "approuve" ? "Approuvé" : "Rejeté"}</span>
+            <span class="moderation-date">${formaterDate(a.dateCreation)}</span>
+          </div>
+          <p>${a.commentaire}</p>
+          <div class="moderation-actions">
+            ${a.statut !== "approuve" ? '<button type="button" class="btn-ajouter" data-action="approuver">Approuver</button>' : ""}
+            ${a.statut !== "rejete" ? '<button type="button" class="moderation-rejeter" data-action="rejeter">Rejeter</button>' : ""}
+            ${a.statut === "approuve" ? '<button type="button" class="moderation-rejeter" data-action="depublier">Dépublier</button>' : ""}
+            <button type="button" class="moderation-supprimer" data-action="supprimer">Supprimer définitivement</button>
+          </div>
+        </div>
+      `).join("");
+
+      zone.querySelectorAll(".moderation-carte").forEach((carte) => {
+        const id = carte.dataset.id;
+        const btnApprouver = carte.querySelector('[data-action="approuver"]');
+        const btnRejeter = carte.querySelector('[data-action="rejeter"]');
+        const btnDepublier = carte.querySelector('[data-action="depublier"]');
+        const btnSupprimer = carte.querySelector('[data-action="supprimer"]');
+
+        if (btnApprouver) btnApprouver.addEventListener("click", () => majStatut(id, "approuve"));
+        if (btnRejeter) btnRejeter.addEventListener("click", () => majStatut(id, "rejete"));
+        if (btnDepublier) btnDepublier.addEventListener("click", () => majStatut(id, "en_attente"));
+        if (btnSupprimer) btnSupprimer.addEventListener("click", () => supprimerAvis(id));
+      });
+    }
+
+    async function majStatut(id, nouveauStatut) {
+      await db.collection("avis").doc(id).update({ statut: nouveauStatut });
+      const avis = TOUS_LES_AVIS.find((a) => a.id === id);
+      if (avis) avis.statut = nouveauStatut;
+      rendreResume();
+      rendreListe();
+    }
+
+    async function supprimerAvis(id) {
+      if (!confirm("Supprimer définitivement cet avis ? Cette action est irréversible.")) return;
+      await db.collection("avis").doc(id).delete();
+      TOUS_LES_AVIS = TOUS_LES_AVIS.filter((a) => a.id !== id);
+      rendreResume();
+      rendreListe();
+    }
+
+    document.querySelectorAll(".mod-tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".mod-tab").forEach((t) => t.classList.remove("actif"));
+        tab.classList.add("actif");
+        ongletActif = tab.dataset.statut;
+        rendreListe();
+      });
+    });
+
+    document.getElementById("mod-recherche").addEventListener("input", (e) => {
+      rechercheActive = e.target.value.trim();
+      rendreListe();
+    });
+
+    firebase.auth().onAuthStateChanged((utilisateur) => {
+      const verrou = document.getElementById("moderation-verrou");
+      const contenu = document.getElementById("moderation-contenu");
+      if (utilisateur && EMAILS_PROPRIETAIRE.includes(utilisateur.email)) {
+        verrou.style.display = "none";
+        contenu.style.display = "block";
+        chargerTousLesAvis();
+      } else {
+        verrou.style.display = "block";
+        contenu.style.display = "none";
+        if (utilisateur) verrou.querySelector("p").textContent = "Ce compte n'est pas autorisé à modérer les avis.";
+      }
+    });
+  </script>
+</body>
+</html>

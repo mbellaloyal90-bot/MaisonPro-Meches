@@ -1,0 +1,121 @@
+/* =========================================================
+   MaisonPro Mèches — auth.js
+   Authentification via Firebase : connexion Google et
+   création de compte email/mot de passe. Intégré dans le
+   panneau unique "Mon espace" (onglet Compte).
+   ========================================================= */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDGqOb9i4l6Ebs30WCOtQGGC6IFA3Jzxl0",
+  authDomain: "maisonpro-meches.firebaseapp.com",
+  projectId: "maisonpro-meches",
+  storageBucket: "maisonpro-meches.firebasestorage.app",
+  messagingSenderId: "637669819790",
+  appId: "1:637669819790:web:0bd03290dbcd8e8e4950df",
+  measurementId: "G-N5Z4MEY002",
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+(function () {
+  "use strict";
+
+  const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+  function connexionGoogle() {
+    auth.signInWithPopup(googleProvider).catch((erreur) => {
+      afficherErreur(traduireErreur(erreur.code));
+    });
+  }
+
+  function creerCompteEmail(email, motDePasse, nom) {
+    auth
+      .createUserWithEmailAndPassword(email, motDePasse)
+      .then((identifiants) => identifiants.user.updateProfile({ displayName: nom }))
+      .catch((erreur) => afficherErreur(traduireErreur(erreur.code)));
+  }
+
+  function connexionEmail(email, motDePasse) {
+    auth.signInWithEmailAndPassword(email, motDePasse).catch((erreur) => {
+      afficherErreur(traduireErreur(erreur.code));
+    });
+  }
+
+  function deconnexion() {
+    auth.signOut().then(() => {
+      window.location.href = "index.html";
+    });
+  }
+
+  function traduireErreur(code) {
+    const messages = {
+      "auth/email-already-in-use": "Cet email a déjà un compte. Essaie de te connecter à la place.",
+      "auth/invalid-email": "L'adresse email n'est pas valide.",
+      "auth/weak-password": "Le mot de passe doit faire au moins 6 caractères.",
+      "auth/user-not-found": "Aucun compte ne correspond à cet email.",
+      "auth/wrong-password": "Mot de passe incorrect.",
+      "auth/invalid-credential": "Email ou mot de passe incorrect.",
+      "auth/popup-closed-by-user": "Fenêtre Google fermée avant la fin de la connexion.",
+      "auth/operation-not-allowed": "La connexion par email n'est pas encore activée sur ce projet.",
+      "auth/too-many-requests": "Trop de tentatives. Réessaie dans quelques minutes.",
+    };
+    return messages[code] || `Une erreur est survenue (${code || "inconnue"}). Réessaie.`;
+  }
+
+  function afficherErreur(message) {
+    const zone = document.getElementById("auth-erreur");
+    if (zone) { zone.textContent = message; zone.style.display = "block"; }
+    else alert(message);
+  }
+
+  auth.onAuthStateChanged((utilisateur) => {
+    window.mpUtilisateurConnecte = utilisateur || null;
+
+    const pastille = document.getElementById("espace-connecte-pastille");
+    const zoneConnecte = document.getElementById("auth-connecte");
+    const zoneFormulaires = document.getElementById("auth-formulaires");
+    const nomAffiche = document.getElementById("auth-nom-utilisateur");
+
+    if (utilisateur) {
+      if (pastille) pastille.style.display = "block";
+      if (zoneConnecte) zoneConnecte.style.display = "block";
+      if (zoneFormulaires) zoneFormulaires.style.display = "none";
+      if (nomAffiche) nomAffiche.textContent = utilisateur.displayName || utilisateur.email;
+    } else {
+      if (pastille) pastille.style.display = "none";
+      if (zoneConnecte) zoneConnecte.style.display = "none";
+      if (zoneFormulaires) zoneFormulaires.style.display = "block";
+    }
+
+    document.dispatchEvent(new CustomEvent("mp-auth-change", { detail: { utilisateur } }));
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const boutonGoogle = document.getElementById("btn-google");
+    const boutonDeconnexion = document.getElementById("btn-deconnexion");
+    const formulaireInscription = document.getElementById("form-inscription");
+    const formulaireConnexion = document.getElementById("form-connexion");
+
+    if (boutonGoogle) boutonGoogle.addEventListener("click", connexionGoogle);
+    if (boutonDeconnexion) boutonDeconnexion.addEventListener("click", deconnexion);
+
+    if (formulaireInscription) {
+      formulaireInscription.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const nom = document.getElementById("inscription-nom").value.trim();
+        const email = document.getElementById("inscription-email").value.trim();
+        const motDePasse = document.getElementById("inscription-motdepasse").value;
+        creerCompteEmail(email, motDePasse, nom);
+      });
+    }
+    if (formulaireConnexion) {
+      formulaireConnexion.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const email = document.getElementById("connexion-email").value.trim();
+        const motDePasse = document.getElementById("connexion-motdepasse").value;
+        connexionEmail(email, motDePasse);
+      });
+    }
+  });
+})();

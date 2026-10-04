@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Avis clients :
+    // - lecture publique si approuvé
+    // - lecture de TOUS les avis (y compris en attente/rejetés) réservée aux emails propriétaires
+    // - création : uniquement par un utilisateur connecté, en statut "en_attente"
+    // - modification (approbation/rejet/suppression) : uniquement par les emails propriétaires
+    match /avis/{avisId} {
+      allow read: if resource.data.statut == 'approuve'
+                  || (request.auth != null && request.auth.token.email in [
+                       'mbellaloyal90@gmail.com',
+                       'maisonprocontact@gmail.com',
+                       'mbjjaures@gmail.com'
+                     ]);
+      allow create: if request.auth != null
+                    && request.resource.data.statut == 'en_attente'
+                    && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if request.auth != null && request.auth.token.email in [
+                       'mbellaloyal90@gmail.com',
+                       'maisonprocontact@gmail.com',
+                       'mbjjaures@gmail.com'
+                     ];
+    }
+
+    // Compteurs de statistiques (visites, commandes) : lecture publique,
+    // écriture ouverte en incrémentation simple (site sans serveur).
+    match /statistiques/compteurs {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    match /inventaire/{produitId} {
+      allow read, write: if request.auth != null && request.auth.token.email in ['mbellaloyal90@gmail.com', 'maisonprocontact@gmail.com', 'mbjjaures@gmail.com'];
+    }
+
+    match /mouvementsStock/{mouvementId} {
+      allow read, write: if request.auth != null && request.auth.token.email in ['mbellaloyal90@gmail.com', 'maisonprocontact@gmail.com', 'mbjjaures@gmail.com'];
+    }
+
+    match /catalogueDisponibilite/{produitId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.email in ['mbellaloyal90@gmail.com', 'maisonprocontact@gmail.com', 'mbjjaures@gmail.com'];
+    }
+  }
+}
