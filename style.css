@@ -1217,3 +1217,153 @@ html[data-theme="sombre"] .page-stock { background: radial-gradient(circle at 10
 }
 .stock-sauver:hover { background: var(--espresso-2); }
 .stock-statut { font-size: .78rem; font-weight: 600; min-width: 90px; }
+/* =========================================================
+   EFFET VERRE — glassmorphism moderne
+   Verre dépoli (fond translucide + flou) sur les éléments qui
+   flottent au-dessus du contenu : en-tête au défilement,
+   panneaux latéraux (panier, mon espace), barre de stats,
+   badges produits, boutons flottants, carte du quiz.
+   ========================================================= */
+:root {
+  --verre-fond:        rgba(255,255,255,.62);
+  --verre-fond-fort:   rgba(255,255,255,.8);
+  --verre-bord:        rgba(255,255,255,.55);
+  --verre-surbrillance: rgba(255,255,255,.5);
+  --verre-sombre-fond:      rgba(43,24,16,.56);
+  --verre-sombre-fond-fort: rgba(43,24,16,.74);
+  --verre-sombre-bord:      rgba(255,255,255,.14);
+}
+html[data-theme="sombre"] {
+  --verre-fond:         rgba(38,26,18,.58);
+  --verre-fond-fort:    rgba(38,26,18,.78);
+  --verre-bord:         rgba(255,255,255,.09);
+  --verre-surbrillance: rgba(255,255,255,.07);
+}
+
+/* ---- En-tête : verre dépoli au défilement ---- */
+.site-header.flou {
+  background: var(--verre-sombre-fond);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--verre-sombre-bord);
+}
+#espace-toggle, #cart-toggle {
+  background: rgba(255,255,255,.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.08);
+}
+#espace-toggle:hover, #cart-toggle:hover { background: rgba(255,255,255,.18); }
+
+/* ---- Panneaux latéraux : panier + mon espace ---- */
+#cart-drawer, #espace-panel {
+  background: var(--verre-fond-fort);
+  backdrop-filter: blur(30px) saturate(170%);
+  -webkit-backdrop-filter: blur(30px) saturate(170%);
+  border-left: 1px solid var(--verre-bord);
+  box-shadow: -24px 0 70px -20px rgba(43,24,16,.38), inset 1px 0 0 var(--verre-surbrillance);
+}
+.cart-head, .cart-foot { background: transparent; backdrop-filter: none; }
+.cart-total { background: rgba(217,168,87,.18); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+
+.espace-tabs {
+  background: rgba(255,255,255,.3);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid var(--verre-bord);
+}
+html[data-theme="sombre"] .espace-tabs { background: rgba(0,0,0,.22); }
+.espace-tab.actif {
+  background: var(--verre-fond-fort);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 14px -6px rgba(43,24,16,.25);
+}
+
+/* ---- Barre de statistiques flottante ---- */
+.stat-item {
+  background: var(--verre-fond-fort);
+  backdrop-filter: blur(18px) saturate(170%);
+  -webkit-backdrop-filter: blur(18px) saturate(170%);
+  border-top: 1px solid var(--verre-surbrillance);
+}
+
+/* ---- Badges produits (gamme + stock) ---- */
+.badge-gamme {
+  background: rgba(43,24,16,.48);
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  border: 1px solid rgba(255,255,255,.2);
+}
+.badge-stock-bas, .badge-stock-rupture {
+  backdrop-filter: blur(8px) saturate(180%);
+  -webkit-backdrop-filter: blur(8px) saturate(180%);
+  border: 1px solid rgba(255,255,255,.25);
+}
+.badge-stock-bas { background: rgba(192,129,63,.72); }
+.badge-stock-rupture { background: rgba(162,59,42,.75); }
+
+.btn-favori, .btn-ajout-rapide {
+  background: rgba(255,255,255,.72);
+  backdrop-filter: blur(8px) saturate(160%);
+  -webkit-backdrop-filter: blur(8px) saturate(160%);
+  border: 1px solid rgba(255,255,255,.5);
+}
+
+/* ---- Boutons flottants (WhatsApp + retour en haut) ---- */
+.flottants .bouton-flottant {
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255,255,255,.3);
+}
+#whatsapp-flottant { background: rgba(37,211,102,.82); }
+#back-to-top {
+  background: var(--verre-sombre-fond-fort);
+  border-color: var(--verre-sombre-bord);
+}
+
+/* ---- Barre de recherche catalogue ---- */
+.catalogue-recherche {
+  background: var(--verre-fond);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid var(--verre-bord);
+}
+
+/* ---- Carte du quiz "Trouve ta teinte" ---- */
+.quiz-section #quiz {
+  background: var(--verre-fond-fort);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  border: 1px solid var(--verre-bord);
+}
+.quiz-option {
+  background: rgba(255,255,255,.4);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+html[data-theme="sombre"] .quiz-option { background: rgba(0,0,0,.2); }
+
+/* ---- Carte "arrival" (page d'accueil) : renforcer le verre déjà présent ---- */
+.arrival-button-secondary {
+  background: rgba(255,255,255,.08);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  border: 1px solid rgba(255,255,255,.3);
+}
+.arrival-kicker {
+  padding: 6px 12px 6px 10px;
+  background: rgba(255,255,255,.07);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: var(--r-pill);
+  border: 1px solid rgba(255,255,255,.14);
+  width: fit-content;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .site-header.flou, #cart-drawer, #espace-panel, .stat-item, .badge-gamme,
+  .bouton-flottant, .quiz-section #quiz, .catalogue-recherche {
+    backdrop-filter: none; -webkit-backdrop-filter: none;
+  }
+}
