@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Gestion du stock — MaisonPro Mèches</title>
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page-politiques">
+
+  <header class="site-header">
+    <div class="brand">
+      <img src="images/logo.png" alt="Logo MaisonPro Mèches" class="brand-logo">
+      <span class="brand-name">MaisonPro</span>
+      <span class="brand-tag">mèches</span>
+    </div>
+    <nav><ul><li><a href="index.html">Boutique</a></li><li><a href="moderation.html">Avis</a></li></ul></nav>
+  </header>
+
+  <main>
+    <h1>Gestion du stock</h1>
+    <p class="maj">Page réservée aux comptes propriétaires de la boutique. Les quantités sont visibles en direct sur le site (badge "Plus que X en stock" dès 3 ou moins, "Rupture de stock" à 0).</p>
+
+    <div id="stock-verrou" class="politique-bloc">
+      <p>Connecte-toi avec un compte propriétaire pour gérer le stock.</p>
+      <button type="button" class="btn-ajouter" onclick="firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())">
+        Se connecter avec Google
+      </button>
+    </div>
+
+    <div id="stock-contenu" style="display:none;">
+      <div id="stock-liste"></div>
+    </div>
+  </main>
+
+  <script src="produits-data.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    const EMAILS_PROPRIETAIRE = ["mbellaloyal90@gmail.com", "maisonprocontact@gmail.com", "mbjjaures@gmail.com"];
+    const db = firebase.firestore();
+
+    function ligneHTML(produit, quantite) {
+      const valeur = quantite === undefined || quantite === null ? "" : quantite;
+      return `
+        <div class="stock-ligne" data-id="${produit.id}">
+          <img src="${produit.image}" alt="${produit.nom}">
+          <div class="stock-info">
+            <h4>${produit.nom}</h4>
+            <span>${produit.badge}</span>
+          </div>
+          <input type="number" min="0" class="stock-input" placeholder="non défini" value="${valeur}">
+          <button type="button" class="stock-sauver">Enregistrer</button>
+          <span class="stock-statut"></span>
+        </div>`;
+    }
+
+    async function chargerStock() {
+      const zone = document.getElementById("stock-liste");
+      zone.innerHTML = "<p>Chargement...</p>";
+      let stockActuel = {};
+      try {
+        const snap = await db.collection("stock").get();
+        snap.forEach((doc) => { stockActuel[doc.id] = doc.data().quantite; });
+      } catch (e) {
+        zone.innerHTML = `<p style="color:#A23B2A;">Erreur d'accès au stock : ${e.message}. Vérifie que les règles Firestore sont bien publiées.</p>`;
+        return;
+      }
+
+      zone.innerHTML = PRODUITS.map((p) => ligneHTML(p, stockActuel[p.id])).join("");
+
+      zone.querySelectorAll(".stock-ligne").forEach((ligne) => {
+        const id = ligne.dataset.id;
+        const input = ligne.querySelector(".stock-input");
+        const bouton = ligne.querySelector(".stock-sauver");
+        const statut = ligne.querySelector(".stock-statut");
+
+        bouton.addEventListener("click", async () => {
+          const valeur = parseInt(input.value, 10);
+          if (isNaN(valeur) || valeur < 0) {
+            statut.textContent = "Entre un nombre valide";
+            statut.style.color = "#A23B2A";
+            return;
+          }
+          statut.textContent = "...";
+          statut.style.color = "";
+          try {
+            await db.collection("stock").doc(id).set({ quantite: valeur });
+            statut.textContent = "✓ Enregistré";
+            statut.style.color = "#1F7A46";
+          } catch (e) {
+            statut.textContent = "Erreur";
+            statut.style.color = "#A23B2A";
+          }
+        });
+      });
+    }
+
+    firebase.auth().onAuthStateChanged((utilisateur) => {
+      const verrou = document.getElementById("stock-verrou");
+      const contenu = document.getElementById("stock-contenu");
+      if (utilisateur && EMAILS_PROPRIETAIRE.includes(utilisateur.email)) {
+        verrou.style.display = "none";
+        contenu.style.display = "block";
+        chargerStock();
+      } else {
+        verrou.style.display = "block";
+        contenu.style.display = "none";
+        if (utilisateur) verrou.querySelector("p").textContent = "Ce compte n'est pas autorisé à gérer le stock.";
+      }
+    });
+  </script>
+</body>
+</html>

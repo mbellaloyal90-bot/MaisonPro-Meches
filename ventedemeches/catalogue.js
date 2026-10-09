@@ -13,7 +13,7 @@
 
   function carteHTML(p) {
     return `
-      <article class="produit-carte" data-stock-id="${p.id}" data-id="${p.id}" data-nom="${p.nom}" data-prix="${p.prix}" data-image="${p.image}">
+      <article class="produit-carte" data-id="${p.id}" data-nom="${p.nom}" data-prix="${p.prix}" data-image="${p.image}">
         <button type="button" class="btn-favori" aria-label="Ajouter aux favoris"></button>
         <div class="produit-media">
           <img src="${p.image}" alt="${p.nom}" loading="lazy">
@@ -23,7 +23,6 @@
         <div class="produit-info">
           <h3>${p.nom}</h3>
           <span class="produit-prix">${formaterPrix(p.prix)}</span>
-          <span class="stock-public-etiquette">Disponible</span>
         </div>
       </article>`;
   }
@@ -123,7 +122,7 @@
 
     conteneur.innerHTML = `
       <a href="index.html#produits" class="detail-retour">← Retour à la boutique</a>
-      <div class="detail-grille" data-stock-id="${produit.id}">
+      <div class="detail-grille">
         <div class="detail-image-zone">
           <img src="${produit.image}" alt="${produit.nom}" class="detail-image">
           <span class="badge-gamme">${produit.badge}</span>
@@ -132,7 +131,6 @@
           <h1>${produit.nom}</h1>
           <p class="detail-meta">${produit.longueur} · ${produit.texture}</p>
           <span class="detail-prix">${formaterPrix(produit.prix)}</span>
-          <span class="stock-public-etiquette">Disponible</span>
           <p class="detail-description">${produit.description}</p>
 
           <div class="detail-actions">
@@ -142,7 +140,7 @@
               <button type="button" data-qte="plus" aria-label="Augmenter">+</button>
             </div>
             <button type="button" class="btn-ajouter" id="detail-btn-ajouter">Ajouter au panier</button>
-            <button type="button" class="btn-favori-detail" aria-label="Ajouter aux favoris"></button>
+            <button type="button" class="btn-favori-detail" data-id="${produit.id}" aria-label="Ajouter aux favoris"></button>
             <button type="button" class="btn-partager" aria-label="Partager ce produit">↗</button>
           </div>
         </div>
@@ -171,35 +169,13 @@
       window.open(`https://wa.me/?text=${encodeURIComponent(texte)}`, "_blank");
     });
 
-    const btnFavori = conteneur.querySelector(".btn-favori-detail");
-    function estFavori() {
-      try {
-        return (JSON.parse(localStorage.getItem("maisonpro-favoris")) || []).includes(produit.id);
-      } catch (e) {
-        return false;
-      }
-    }
-    function majFavori() {
-      btnFavori.classList.toggle("aime", estFavori());
-    }
-    majFavori();
-    btnFavori.addEventListener("click", () => {
-      let favoris = [];
-      try {
-        favoris = JSON.parse(localStorage.getItem("maisonpro-favoris")) || [];
-      } catch (e) {}
-      if (favoris.includes(produit.id)) {
-        favoris = favoris.filter((f) => f !== produit.id);
-        if (window.mpToast) window.mpToast("Retiré des favoris", "💔");
-      } else {
-        favoris.push(produit.id);
-        if (window.mpToast) window.mpToast("Ajouté aux favoris", "❤️");
-      }
-      localStorage.setItem("maisonpro-favoris", JSON.stringify(favoris));
-      majFavori();
-      document.getElementById("wishlist-count") &&
-        (document.getElementById("wishlist-count").textContent = favoris.length);
-    });
+    // Le cœur favoris est géré globalement par interactions.js (initFavoris / rendreTout),
+    // qui écoute déjà les clics sur ".btn-favori-detail" via délégation sur <body>.
+    // Pas de second gestionnaire ici : en avoir un ici en plus provoquait un double
+    // basculement (ajouté puis aussitôt retiré) et polluait la liste de favoris avec
+    // des entrées invalides, car ce bouton n'avait pas d'attribut data-id lisible
+    // par le code global. L'attribut data-id ajouté ci-dessus suffit désormais à
+    // ce que interactions.js affiche et mette à jour correctement l'état du cœur.
 
     const similairesZone = document.getElementById("produits-similaires");
     if (similairesZone) {
@@ -213,6 +189,8 @@
       });
     }
 
+    // Signale que le catalogue est prêt même sur une page détail (pas de grille ici),
+    // pour que favoris, avis et stock s'initialisent correctement.
     document.dispatchEvent(new CustomEvent("mp-catalogue-pret"));
   }
 
