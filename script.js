@@ -3,7 +3,8 @@
    Système de vente : panier en mémoire de session,
    gestion des quantités, total en FCFA, et commande
    finalisée par redirection WhatsApp avec récapitulatif
-   pré-rempli.
+   pré-rempli. Un compte est requis pour valider la commande,
+   mais pas pour parcourir la boutique.
    ========================================================= */
 
 (function () {
@@ -70,6 +71,13 @@
     return panier.reduce((somme, item) => somme + item.quantite, 0);
   }
 
+  function majNoteCompte() {
+    const note = document.getElementById("checkout-compte-note");
+    if (!note) return;
+    note.textContent = window.mpUtilisateurConnecte ? "" : "🔒 Connecte-toi pour pouvoir commander";
+  }
+  document.addEventListener("mp-auth-change", majNoteCompte);
+
   function rendrePanier() {
     const compteurs = document.querySelectorAll("#cart-count");
     compteurs.forEach((c) => (c.textContent = nombreArticles()));
@@ -83,6 +91,7 @@
       conteneur.innerHTML = '<p class="cart-vide">Ton panier est vide pour le moment.</p>';
       if (boutonCommander) boutonCommander.disabled = true;
       if (totalEl) totalEl.textContent = formaterPrix(0);
+      majNoteCompte();
       return;
     }
 
@@ -109,6 +118,7 @@
 
     if (boutonCommander) boutonCommander.disabled = false;
     if (totalEl) totalEl.textContent = formaterPrix(totalPanier());
+    majNoteCompte();
 
     conteneur.querySelectorAll(".cart-item").forEach((el) => {
       const id = el.dataset.id;
@@ -119,23 +129,48 @@
   }
   window.mpRendrePanier = rendrePanier;
 
-  function construireMessageWhatsApp() {
+  function construireMessageWhatsApp(reduction) {
     let lignes = ["Bonjour MaisonPro, je souhaite commander :", ""];
     panier.forEach((item) => {
       lignes.push(`• ${item.nom} x${item.quantite} — ${formaterPrix(item.prix * item.quantite)}`);
     });
     lignes.push("");
+    const sousTotal = totalPanier();
+    let total = sousTotal + FRAIS_LIVRAISON;
+    if (reduction) {
+      const remise = Math.round(sousTotal * 0.1);
+      lignes.push(`🎁 Réduction fidélité (5ème commande, -10%) : -${formaterPrix(remise)}`);
+      total -= remise;
+    }
     lignes.push(`Livraison Yaoundé : ${formaterPrix(FRAIS_LIVRAISON)}`);
-    lignes.push(`Total à payer : ${formaterPrix(totalPanier() + FRAIS_LIVRAISON)}`);
+    lignes.push(`Total à payer : ${formaterPrix(total)}`);
     lignes.push("");
     lignes.push("Merci de me confirmer la disponibilité.");
     return lignes.join("\n");
   }
 
-  function ouvrirWhatsApp() {
+  async function ouvrirWhatsApp() {
     if (panier.length === 0) return;
-    const message = encodeURIComponent(construireMessageWhatsApp());
-    window.open(`https://wa.me/${WHATSAPP_NUMERO}?text=${message}`, "_blank");
+    if (!window.mpUtilisateurConnecte) {
+      if (window.mpToast) window.mpToast("Crée un compte ou connecte-toi pour commander", "🔒");
+      if (window.mpOuvrirEspace) window.mpOuvrirEspace("compte");
+      return;
+    }
+
+    const fenetre = window.open("", "_blank");
+
+    let reduction = false;
+    if (window.mpEnregistrerCommandeFidelite) {
+      const resultat = await window.mpEnregistrerCommandeFidelite();
+      reduction = resultat.reduction;
+      if (reduction && window.mpToast) window.mpToast("🎉 -10% appliqué, 5ème commande !", "🎁");
+    }
+
+    const message = encodeURIComponent(construireMessageWhatsApp(reduction));
+    if (window.mpComptabiliserCommande) window.mpComptabiliserCommande();
+    const url = `https://wa.me/${WHATSAPP_NUMERO}?text=${message}`;
+    if (fenetre) fenetre.location.href = url;
+    else window.open(url, "_blank");
   }
 
   function initDrawer() {
@@ -166,6 +201,8 @@
   /* Ajout rapide (1 clic = +1) depuis la grille ou les produits similaires */
   function initAjoutRapide() {
     document.querySelectorAll(".produit-carte .btn-ajout-rapide").forEach((btn) => {
+      if (btn.dataset.ajoutRapidePret) return;
+      btn.dataset.ajoutRapidePret = "true";
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
         const carte = btn.closest(".produit-carte");

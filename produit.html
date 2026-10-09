@@ -8,9 +8,47 @@
   <link rel="icon" type="image/png" href="images/logo.png">
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+  <div id="preloader" aria-hidden="true">
+    <div class="preloader-inner">
+      <div class="preloader-halo">
+        <img src="images/logo.png" alt="" class="preloader-logo">
+      </div>
+      <p class="preloader-titre">MaisonPro<span>mèches</span></p>
+      <div class="preloader-barre"><span></span></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var htmlEl = document.documentElement;
+      try {
+        if (localStorage.getItem('maisonpro-animations') === 'off') htmlEl.setAttribute('data-anim', 'off');
+      } catch (e) {}
+      document.body.classList.add('preload-actif');
+
+      var MIN_AFFICHAGE = 650;
+      var debut = Date.now();
+
+      function cacherPreloader() {
+        var el = document.getElementById('preloader');
+        if (!el) return;
+        var attente = Math.max(0, MIN_AFFICHAGE - (Date.now() - debut));
+        setTimeout(function () {
+          el.classList.add('cache');
+          document.body.classList.remove('preload-actif');
+          setTimeout(function () { el.remove(); }, 650);
+        }, attente);
+      }
+
+      if (document.readyState === 'complete') cacherPreloader();
+      else window.addEventListener('load', cacherPreloader);
+    })();
+  </script>
 
   <header class="site-header">
     <div class="brand">
@@ -33,9 +71,9 @@
     </nav>
 
     <div class="header-actions">
-      <button type="button" id="wishlist-toggle" aria-label="Mes favoris">❤️<span id="wishlist-count">0</span></button>
-      <button type="button" id="settings-toggle" aria-label="Paramètres">⚙️</button>
-      <button type="button" id="account-toggle" aria-label="Mon compte">👤 Compte</button>
+      <button type="button" id="espace-toggle" aria-label="Mon espace">
+        👤<span id="espace-connecte-pastille"></span>
+      </button>
       <button type="button" id="cart-toggle" aria-label="Ouvrir le panier">🛍️ <span id="cart-count">0</span></button>
     </div>
   </header>
@@ -43,6 +81,33 @@
   <section class="detail-section">
     <div id="detail-produit">
       <!-- généré par catalogue.js à partir de ?id= -->
+    </div>
+  </section>
+
+  <section class="avis-section">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">Ce qu'en disent nos clientes</span>
+      <h2>Avis</h2>
+      <p id="avis-note-moyenne"></p>
+    </div>
+
+    <div id="avis-liste" class="avis-grille" data-reveal="stagger"></div>
+
+    <div class="avis-formulaire" data-reveal>
+      <div id="avis-form-connecte" style="display:none;">
+        <h3>Laisser un avis</h3>
+        <form id="form-avis">
+          <div class="avis-etoiles-choix">
+            <span class="avis-etoile-input">☆</span><span class="avis-etoile-input">☆</span><span class="avis-etoile-input">☆</span><span class="avis-etoile-input">☆</span><span class="avis-etoile-input">☆</span>
+          </div>
+          <textarea id="avis-commentaire" placeholder="Ton expérience avec ce produit..." required></textarea>
+          <button type="submit" class="btn-ajouter">Envoyer mon avis</button>
+        </form>
+      </div>
+      <div id="avis-form-deconnecte">
+        <p>Connecte-toi pour laisser un avis sur ce produit.</p>
+        <button type="button" class="btn-ajouter" onclick="window.mpOuvrirEspace && window.mpOuvrirEspace('compte')">Se connecter</button>
+      </div>
     </div>
   </section>
 
@@ -64,21 +129,60 @@
     <div class="cart-foot">
       <div class="cart-total"><span>Total produits</span><span id="cart-total-valeur">0 FCFA</span></div>
       <p class="cart-livraison">+ 1 000 FCFA de livraison à Yaoundé, ajoutés au message WhatsApp</p>
+      <p id="checkout-compte-note" class="checkout-compte-note"></p>
       <button type="button" id="checkout-whatsapp" disabled>Commander sur WhatsApp</button>
     </div>
   </aside>
 
-  <div id="settings-overlay" class="settings-overlay"></div>
-  <aside id="settings-panel">
-    <button type="button" id="settings-close" aria-label="Fermer">✕</button>
-    <h2>Paramètres</h2>
-    <div class="reglage">
-      <div><div class="reglage-label">Mode sombre</div><div class="reglage-desc">Interface plus douce en faible luminosité</div></div>
-      <label class="switch theme-switch"><input type="checkbox"><span class="switch-piste"></span></label>
+  <div id="espace-overlay" class="espace-overlay"></div>
+  <aside id="espace-panel">
+    <button type="button" id="espace-close" aria-label="Fermer">✕</button>
+    <div class="espace-tabs">
+      <button type="button" class="espace-tab actif" data-tab="compte">Compte</button>
+      <button type="button" class="espace-tab" data-tab="favoris">Favoris <span id="wishlist-count">0</span></button>
+      <button type="button" class="espace-tab" data-tab="parametres">Paramètres</button>
     </div>
-    <div class="reglage">
-      <div><div class="reglage-label">Animations</div><div class="reglage-desc">Désactiver les effets de mouvement</div></div>
-      <label class="switch anim-switch"><input type="checkbox" checked><span class="switch-piste"></span></label>
+    <div class="espace-contenu">
+      <div class="espace-section" data-section="compte">
+        <p id="auth-erreur" class="auth-erreur" style="display:none;"></p>
+        <div id="auth-connecte" style="display:none;">
+          <h2>Bonjour <span id="auth-nom-utilisateur"></span> 👋</h2>
+          <p id="fidelite-info" class="fidelite-info"></p>
+          <button type="button" id="btn-deconnexion" class="btn-ajouter">Se déconnecter</button>
+        </div>
+        <div id="auth-formulaires">
+          <h2>Mon compte</h2>
+          <button type="button" id="btn-google" class="btn-google">Continuer avec Google</button>
+          <p class="auth-separateur">ou avec un email</p>
+          <form id="form-inscription" class="auth-form">
+            <input type="text" id="inscription-nom" placeholder="Ton nom" required>
+            <input type="email" id="inscription-email" placeholder="Email" required>
+            <input type="password" id="inscription-motdepasse" placeholder="Mot de passe (6 caractères min.)" required minlength="6">
+            <button type="submit" class="btn-ajouter">Créer un compte</button>
+          </form>
+          <p class="auth-separateur">déjà un compte ?</p>
+          <form id="form-connexion" class="auth-form">
+            <input type="email" id="connexion-email" placeholder="Email" required>
+            <input type="password" id="connexion-motdepasse" placeholder="Mot de passe" required>
+            <button type="submit" class="btn-ajouter">Se connecter</button>
+          </form>
+        </div>
+      </div>
+      <div class="espace-section" data-section="favoris" hidden>
+        <h2>Mes favoris</h2>
+        <div id="favoris-liste"></div>
+      </div>
+      <div class="espace-section" data-section="parametres" hidden>
+        <h2>Paramètres</h2>
+        <div class="reglage">
+          <div><div class="reglage-label">Mode sombre</div><div class="reglage-desc">Interface plus douce en faible luminosité</div></div>
+          <label class="switch theme-switch"><input type="checkbox"><span class="switch-piste"></span></label>
+        </div>
+        <div class="reglage">
+          <div><div class="reglage-label">Animations</div><div class="reglage-desc">Désactiver les effets de mouvement</div></div>
+          <label class="switch anim-switch"><input type="checkbox" checked><span class="switch-piste"></span></label>
+        </div>
+      </div>
     </div>
   </aside>
 
@@ -89,7 +193,7 @@
         <h4>MaisonPro Mèches</h4>
         <p>Yaoundé, Centre — Cameroun</p>
         <p>WhatsApp / Tél : +237 651 107 092</p>
-        <p>mbellaloyal90@gmail.com</p>
+        <p>maisonprocontact@gmail.com</p>
       </section>
       <section>
         <h4>Infos</h4>
@@ -106,38 +210,20 @@
     <button type="button" class="bouton-flottant" id="back-to-top" aria-label="Retour en haut">↑</button>
   </div>
 
-  <div id="auth-modal" class="auth-modal">
-    <div class="auth-modal-inner">
-      <button type="button" id="auth-close" aria-label="Fermer">✕</button>
-      <p id="auth-erreur" class="auth-erreur" style="display:none;"></p>
-      <div id="auth-connecte" style="display:none;">
-        <h2>Bonjour <span id="auth-nom-utilisateur"></span> 👋</h2>
-        <button type="button" id="btn-deconnexion" class="btn-ajouter">Se déconnecter</button>
-      </div>
-      <div id="auth-formulaires">
-        <h2>Mon compte</h2>
-        <button type="button" id="btn-google" class="btn-google">Continuer avec Google</button>
-        <p class="auth-separateur">ou avec un email</p>
-        <form id="form-inscription" class="auth-form">
-          <input type="text" id="inscription-nom" placeholder="Ton nom" required>
-          <input type="email" id="inscription-email" placeholder="Email" required>
-          <input type="password" id="inscription-motdepasse" placeholder="Mot de passe (6 caractères min.)" required minlength="6">
-          <button type="submit" class="btn-ajouter">Créer un compte</button>
-        </form>
-        <p class="auth-separateur">déjà un compte ?</p>
-        <form id="form-connexion" class="auth-form">
-          <input type="email" id="connexion-email" placeholder="Email" required>
-          <input type="password" id="connexion-motdepasse" placeholder="Mot de passe" required>
-          <button type="submit" class="btn-ajouter">Se connecter</button>
-        </form>
-      </div>
-    </div>
-  </div>
-
   <script src="produits-data.js"></script>
   <script src="catalogue.js"></script>
   <script src="script.js"></script>
   <script src="auth.js"></script>
+  <script src="avis-stats.js"></script>
+  <script src="stock.js"></script>
   <script src="interactions.js"></script>
+  <script>
+    document.addEventListener("mp-catalogue-pret", () => {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+      const produit = PRODUITS.find((p) => p.id === id) || PRODUITS[0];
+      if (window.mpInitAvisProduit) window.mpInitAvisProduit(produit.id, produit.nom);
+    });
+  </script>
 </body>
 </html>

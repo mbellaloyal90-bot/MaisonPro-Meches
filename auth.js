@@ -1,10 +1,10 @@
 /* =========================================================
    MaisonPro Mèches — auth.js
    Authentification via Firebase : connexion Google et
-   création de compte email/mot de passe.
+   création de compte email/mot de passe. Intégré dans le
+   panneau unique "Mon espace" (onglet Compte).
    ========================================================= */
 
-/* ---------- 1. Configuration ---------- */
 const firebaseConfig = {
   apiKey: "AIzaSyDGqOb9i4l6Ebs30WCOtQGGC6IFA3Jzxl0",
   authDomain: "maisonpro-meches.firebaseapp.com",
@@ -32,12 +32,8 @@ const auth = firebase.auth();
   function creerCompteEmail(email, motDePasse, nom) {
     auth
       .createUserWithEmailAndPassword(email, motDePasse)
-      .then((identifiants) => {
-        return identifiants.user.updateProfile({ displayName: nom });
-      })
-      .catch((erreur) => {
-        afficherErreur(traduireErreur(erreur.code));
-      });
+      .then((identifiants) => identifiants.user.updateProfile({ displayName: nom }))
+      .catch((erreur) => afficherErreur(traduireErreur(erreur.code)));
   }
 
   function connexionEmail(email, motDePasse) {
@@ -47,7 +43,9 @@ const auth = firebase.auth();
   }
 
   function deconnexion() {
-    auth.signOut();
+    auth.signOut().then(() => {
+      window.location.href = "index.html";
+    });
   }
 
   function traduireErreur(code) {
@@ -57,60 +55,48 @@ const auth = firebase.auth();
       "auth/weak-password": "Le mot de passe doit faire au moins 6 caractères.",
       "auth/user-not-found": "Aucun compte ne correspond à cet email.",
       "auth/wrong-password": "Mot de passe incorrect.",
+      "auth/invalid-credential": "Email ou mot de passe incorrect.",
       "auth/popup-closed-by-user": "Fenêtre Google fermée avant la fin de la connexion.",
+      "auth/operation-not-allowed": "La connexion par email n'est pas encore activée sur ce projet.",
+      "auth/too-many-requests": "Trop de tentatives. Réessaie dans quelques minutes.",
     };
-    return messages[code] || "Une erreur est survenue. Réessaie.";
+    return messages[code] || `Une erreur est survenue (${code || "inconnue"}). Réessaie.`;
   }
 
   function afficherErreur(message) {
     const zone = document.getElementById("auth-erreur");
-    if (zone) {
-      zone.textContent = message;
-      zone.style.display = "block";
-    } else {
-      alert(message);
-    }
+    if (zone) { zone.textContent = message; zone.style.display = "block"; }
+    else alert(message);
   }
 
   auth.onAuthStateChanged((utilisateur) => {
-    const boutonCompte = document.getElementById("account-toggle");
-    const modal = document.getElementById("auth-modal");
+    window.mpUtilisateurConnecte = utilisateur || null;
+
+    const pastille = document.getElementById("espace-connecte-pastille");
     const zoneConnecte = document.getElementById("auth-connecte");
     const zoneFormulaires = document.getElementById("auth-formulaires");
     const nomAffiche = document.getElementById("auth-nom-utilisateur");
 
     if (utilisateur) {
-      if (boutonCompte) boutonCompte.textContent = "👤 " + (utilisateur.displayName || utilisateur.email.split("@")[0]);
+      if (pastille) pastille.style.display = "block";
       if (zoneConnecte) zoneConnecte.style.display = "block";
       if (zoneFormulaires) zoneFormulaires.style.display = "none";
       if (nomAffiche) nomAffiche.textContent = utilisateur.displayName || utilisateur.email;
-      if (modal) modal.classList.remove("ouvert");
     } else {
-      if (boutonCompte) boutonCompte.textContent = "👤 Mon compte";
+      if (pastille) pastille.style.display = "none";
       if (zoneConnecte) zoneConnecte.style.display = "none";
       if (zoneFormulaires) zoneFormulaires.style.display = "block";
     }
+
+    document.dispatchEvent(new CustomEvent("mp-auth-change", { detail: { utilisateur } }));
   });
 
   document.addEventListener("DOMContentLoaded", () => {
-    const boutonCompte = document.getElementById("account-toggle");
-    const modal = document.getElementById("auth-modal");
-    const boutonFermer = document.getElementById("auth-close");
     const boutonGoogle = document.getElementById("btn-google");
     const boutonDeconnexion = document.getElementById("btn-deconnexion");
     const formulaireInscription = document.getElementById("form-inscription");
     const formulaireConnexion = document.getElementById("form-connexion");
 
-    if (boutonCompte) {
-      boutonCompte.addEventListener("click", () => {
-        if (auth.currentUser) {
-          modal.classList.toggle("ouvert");
-        } else {
-          modal.classList.add("ouvert");
-        }
-      });
-    }
-    if (boutonFermer) boutonFermer.addEventListener("click", () => modal.classList.remove("ouvert"));
     if (boutonGoogle) boutonGoogle.addEventListener("click", connexionGoogle);
     if (boutonDeconnexion) boutonDeconnexion.addEventListener("click", deconnexion);
 
@@ -123,7 +109,6 @@ const auth = firebase.auth();
         creerCompteEmail(email, motDePasse, nom);
       });
     }
-
     if (formulaireConnexion) {
       formulaireConnexion.addEventListener("submit", (e) => {
         e.preventDefault();
