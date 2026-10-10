@@ -41,6 +41,35 @@
     window.mpOuvrirEspace = ouvrir;
   }
 
+  /* ---------- 1b. Bascule connexion / inscription + œil mot de passe ---------- */
+  function initAuthBascule() {
+    function activerMode(mode) {
+      document.querySelectorAll(".auth-bascule-item").forEach((bouton) => {
+        const actif = bouton.dataset.authMode === mode;
+        bouton.classList.toggle("actif", actif);
+        bouton.setAttribute("aria-selected", String(actif));
+      });
+      document.querySelectorAll("[data-auth-panneau]").forEach((form) => {
+        form.hidden = form.dataset.authPanneau !== mode;
+      });
+    }
+    document.querySelectorAll(".auth-bascule-item").forEach((bouton) => {
+      bouton.addEventListener("click", () => activerMode(bouton.dataset.authMode));
+    });
+    window.mpActiverModeAuth = activerMode;
+
+    document.querySelectorAll(".auth-oeil").forEach((bouton) => {
+      bouton.addEventListener("click", () => {
+        const champ = bouton.previousElementSibling;
+        if (!champ) return;
+        const visible = champ.type === "text";
+        champ.type = visible ? "password" : "text";
+        bouton.textContent = visible ? "👁" : "🙈";
+        bouton.setAttribute("aria-label", visible ? "Afficher le mot de passe" : "Masquer le mot de passe");
+      });
+    });
+  }
+
   /* ---------- 2. Thème sombre / animations (dans l'onglet Paramètres) ---------- */
   const PREF_THEME = "maisonpro-theme";
   const PREF_ANIM = "maisonpro-animations";
@@ -287,6 +316,7 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     initEspace();
+    initAuthBascule();
     initParametres();
     initMenuMobile();
     initFavoris();

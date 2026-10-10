@@ -76,12 +76,14 @@ const auth = firebase.auth();
     const zoneConnecte = document.getElementById("auth-connecte");
     const zoneFormulaires = document.getElementById("auth-formulaires");
     const nomAffiche = document.getElementById("auth-nom-utilisateur");
+    const avatar = document.getElementById("auth-avatar");
 
     if (utilisateur) {
       if (pastille) pastille.style.display = "block";
       if (zoneConnecte) zoneConnecte.style.display = "block";
       if (zoneFormulaires) zoneFormulaires.style.display = "none";
       if (nomAffiche) nomAffiche.textContent = utilisateur.displayName || utilisateur.email;
+      if (avatar) avatar.textContent = (utilisateur.displayName || utilisateur.email || "?").trim().charAt(0).toUpperCase();
     } else {
       if (pastille) pastille.style.display = "none";
       if (zoneConnecte) zoneConnecte.style.display = "none";

@@ -146,25 +146,63 @@
       <div class="espace-section" data-section="compte">
         <p id="auth-erreur" class="auth-erreur" style="display:none;"></p>
         <div id="auth-connecte" style="display:none;">
+          <div class="auth-avatar" id="auth-avatar"></div>
           <h2>Bonjour <span id="auth-nom-utilisateur"></span> 👋</h2>
           <p id="fidelite-info" class="fidelite-info"></p>
-          <button type="button" id="btn-deconnexion" class="btn-ajouter">Se déconnecter</button>
+          <button type="button" id="btn-deconnexion" class="btn-ajouter btn-deconnexion">Se déconnecter</button>
         </div>
         <div id="auth-formulaires">
-          <h2>Mon compte</h2>
-          <button type="button" id="btn-google" class="btn-google">Continuer avec Google</button>
-          <p class="auth-separateur">ou avec un email</p>
-          <form id="form-inscription" class="auth-form">
-            <input type="text" id="inscription-nom" placeholder="Ton nom" required>
-            <input type="email" id="inscription-email" placeholder="Email" required>
-            <input type="password" id="inscription-motdepasse" placeholder="Mot de passe (6 caractères min.)" required minlength="6">
-            <button type="submit" class="btn-ajouter">Créer un compte</button>
+          <div class="auth-intro">
+            <span class="auth-glyphe">✦</span>
+            <h2>Accède à ton espace</h2>
+            <p class="auth-sous-titre">Connecte-toi pour commander et retrouver tes mèches favorites.</p>
+          </div>
+
+          <button type="button" id="btn-google" class="btn-google">
+            <svg class="btn-google-icone" viewBox="0 0 18 18" aria-hidden="true" focusable="false">
+              <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z"/>
+              <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.87-3.04.87-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18z"/>
+              <path fill="#FBBC05" d="M3.97 10.73A5.4 5.4 0 0 1 3.68 9c0-.6.1-1.19.29-1.73V4.94H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.06l3.01-2.33z"/>
+              <path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.94l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"/>
+            </svg>
+            Continuer avec Google
+          </button>
+
+          <div class="auth-separateur"><span>ou avec ton email</span></div>
+
+          <div class="auth-bascule" role="tablist">
+            <button type="button" class="auth-bascule-item actif" data-auth-mode="connexion" role="tab" aria-selected="true">Se connecter</button>
+            <button type="button" class="auth-bascule-item" data-auth-mode="inscription" role="tab" aria-selected="false">Créer un compte</button>
+          </div>
+
+          <form id="form-connexion" class="auth-form" data-auth-panneau="connexion">
+            <label class="auth-champ">
+              <span>Email</span>
+              <input type="email" id="connexion-email" placeholder="toi@email.com" required>
+            </label>
+            <label class="auth-champ auth-champ-mdp">
+              <span>Mot de passe</span>
+              <input type="password" id="connexion-motdepasse" placeholder="••••••••" required>
+              <button type="button" class="auth-oeil" aria-label="Afficher le mot de passe">👁</button>
+            </label>
+            <button type="submit" class="auth-submit">Se connecter</button>
           </form>
-          <p class="auth-separateur">déjà un compte ?</p>
-          <form id="form-connexion" class="auth-form">
-            <input type="email" id="connexion-email" placeholder="Email" required>
-            <input type="password" id="connexion-motdepasse" placeholder="Mot de passe" required>
-            <button type="submit" class="btn-ajouter">Se connecter</button>
+
+          <form id="form-inscription" class="auth-form" data-auth-panneau="inscription" hidden>
+            <label class="auth-champ">
+              <span>Nom</span>
+              <input type="text" id="inscription-nom" placeholder="Ton nom" required>
+            </label>
+            <label class="auth-champ">
+              <span>Email</span>
+              <input type="email" id="inscription-email" placeholder="toi@email.com" required>
+            </label>
+            <label class="auth-champ auth-champ-mdp">
+              <span>Mot de passe</span>
+              <input type="password" id="inscription-motdepasse" placeholder="6 caractères min." required minlength="6">
+              <button type="button" class="auth-oeil" aria-label="Afficher le mot de passe">👁</button>
+            </label>
+            <button type="submit" class="auth-submit">Créer mon compte</button>
           </form>
         </div>
       </div>
